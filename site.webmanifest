@@ -1,0 +1,9 @@
+{
+  "name": "Manjil Shrestha — Digital Marketing Expert in Melbourne",
+  "short_name": "Manjil Shrestha",
+  "icons": [{ "src": "assets/favicon.svg", "sizes": "any", "type": "image/svg+xml" }],
+  "theme_color": "#08090C",
+  "background_color": "#08090C",
+  "display": "standalone",
+  "start_url": "/"
+}

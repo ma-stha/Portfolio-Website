@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Manjil Shrestha monogram">
+  <defs>
+    <linearGradient id="g" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#FF7A1A"/>
+      <stop offset="1" stop-color="#FFB020"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#0B0D12"/>
+  <!-- the "M" drawn as a rising signal line -->
+  <path d="M10 50 L22 26 L32 40 L47 15" fill="none" stroke="url(#g)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- baseline data ticks -->
+  <g fill="#FFB020" opacity=".35">
+    <rect x="10" y="55" width="8" height="2" rx="1"/>
+    <rect x="22" y="55" width="8" height="2" rx="1"/>
+    <rect x="34" y="55" width="8" height="2" rx="1"/>
+    <rect x="46" y="55" width="8" height="2" rx="1"/>
+  </g>
+  <!-- the live data point -->
+  <circle cx="49" cy="13" r="4.5" fill="#FFB020" filter="url(#glow)"/>
+</svg>
