@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mastha — Notes from the dashboard</title>
+    <link>https://manjilshrestha.online/blog/</link>
+    <atom:link href="https://manjilshrestha.online/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Analytics, SEO, paid media and CRO notes from Manjil Shrestha, a digital marketing expert in Melbourne.</description>
+    <language>en-au</language>
+    <item>
+      <title>Why most GA4 setups lie to you (and five fixes)</title>
+      <link>https://manjilshrestha.online/blog/ga4-setups-lie-to-you/</link>
+      <guid isPermaLink="true">https://manjilshrestha.online/blog/ga4-setups-lie-to-you/</guid>
+      <pubDate>Wed, 14 Oct 2026 09:00:00 +1000</pubDate>
+      <category>Analytics</category>
+      <description>Your dashboard says sales are up. Your bank account disagrees. Here are the five GA4 settings behind most of the gap, and how to fix each in under an hour.</description>
+    </item>
+    <item>
+      <title>A suburb-by-suburb playbook for ranking in Melbourne</title>
+      <link>https://manjilshrestha.online/blog/melbourne-local-seo-playbook/</link>
+      <guid isPermaLink="true">https://manjilshrestha.online/blog/melbourne-local-seo-playbook/</guid>
+      <pubDate>Tue, 22 Sep 2026 09:00:00 +1000</pubDate>
+      <category>Local SEO</category>
+      <description>Melbourne customers search by suburb. Here is how to build pages, profiles and proof that rank in the suburbs you actually serve, without creating thin doorway pages.</description>
+    </item>
+    <item>
+      <title>Marginal ROAS: the only budget rule you need</title>
+      <link>https://manjilshrestha.online/blog/marginal-roas-budget-rule/</link>
+      <guid isPermaLink="true">https://manjilshrestha.online/blog/marginal-roas-budget-rule/</guid>
+      <pubDate>Tue, 18 Aug 2026 09:00:00 +1000</pubDate>
+      <category>Paid Media</category>
+      <description>Average ROAS tells you how your ads did. Marginal ROAS tells you what your next dollar will do. Only one of those should decide your budget.</description>
+    </item>
+  </channel>
+</rss>

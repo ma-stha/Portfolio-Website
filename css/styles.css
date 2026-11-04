@@ -89,7 +89,8 @@ main, .footer { position: relative; z-index: 2; overflow-x: clip; }
 
 /* ---------- HUD ---------- */
 .hud { position: fixed; left: 16px; bottom: 16px; z-index: 950; display: flex; gap: 6px; align-items: center; padding: 6px; border-radius: 999px; background: rgba(20,19,23,.72); border: 1px solid var(--line-2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); font-family: var(--f-mono); font-size: .72rem; }
-.hud__count { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; }
+.hud__count { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; white-space: nowrap; }
+.hud__btn { white-space: nowrap; }
 .hud__count svg { width: 14px; height: 14px; color: var(--uv); filter: drop-shadow(0 0 4px var(--violet)); }
 .hud__count b { color: var(--uv); }
 .hud__btn { padding: 7px 12px; border-radius: 999px; background: rgba(120,68,233,.18); border: 1px solid rgba(181,150,255,.3); transition: background .2s; }
@@ -540,3 +541,6 @@ main, .footer { position: relative; z-index: 2; overflow-x: clip; }
   .js .reveal, .js .fade, .js .hero__title .line > span { opacity: 1; transform: none; }
   .statement .w { opacity: 1; }
 }
+
+/* ---------- Shared helper used on home + pages ---------- */
+.more-row { margin-top: 30px; display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }

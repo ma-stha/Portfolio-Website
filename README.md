@@ -22,25 +22,52 @@ Near-black textured paper, one violet light. The cursor is a UV torch: it lights
 - **Touch devices**: the torch wanders through the hero by itself, and follows the visitor's finger anywhere on the page.
 - **Accessibility**: a "Reveal all" button shows every hidden element. Reduced-motion users get everything revealed by default.
 
-Other sections: client marquee, about with stats, services accordion, growth lab calculator, typing terminal process, toolkit, experience timeline with education and certifications, testimonial slider, insights, FAQ (published as FAQ schema), contact card and form, and a footer logo that lights up under the torch.
+Home page sections: client marquee, about with stats, services accordion, growth lab calculator, typing terminal process, toolkit, experience timeline with education and certifications, testimonial slider, insights, FAQ (published as FAQ schema), contact card and form, and a footer logo that lights up under the torch.
+
+## Pages
+
+| URL | What's on it |
+|-----|--------------|
+| `/` | Home page |
+| `/services/` | Six detailed services with a sticky index, three pricing packages, process, industries, FAQ |
+| `/book/` | Free consultation booking: calendar, Melbourne-time slots shown in the visitor's time zone, details form, confirmation with Google Calendar and .ics links |
+| `/contact/` | Live Melbourne clock and status, contact methods, full enquiry form, office hours, FAQ |
+| `/blog/` | Featured post, topic filters, search, post grid, topics, newsletter sign-up |
+| `/blog/<slug>/` | Article layout: sticky table of contents with reading progress, TL;DR box, callouts, stat rows, charts, tables, code, interactive checklist, hidden margin notes, author box, newsletter, previous/next, related posts |
+| `/blog/_template/` | Copy-ready article template showing every component (set to noindex) |
+| `/blog/feed.xml` | RSS feed |
+
+Every page has its own hidden UV notes, so the torch hunt works site-wide.
 
 ## Where to edit things
 
 | What | File |
 |------|------|
-| All repeated content: email, socials, clients, stats, services, case files, process, calculator defaults, toolkit, experience, education, certifications, testimonials, insights, FAQ | `js/content.js` |
-| Hero headline, About text, hidden notes, meta tags, structured data | `index.html` |
-| Colours, fonts, torch size | `css/styles.css` (tokens at the top) |
+| Home page content: email, socials, clients, stats, services, case files, process, calculator defaults, toolkit, experience, education, certifications, testimonials, insights, FAQ | `js/content.js` |
+| Home hero, About text, hidden notes, meta tags | `index.html` |
+| Services, pricing, booking, contact copy | `services/index.html`, `book/index.html`, `contact/index.html` |
+| Booking hours and how far ahead people can book | top of `js/book.js` (`SLOTS`, `DAYS_AHEAD`) |
+| Colours, fonts, torch size | `css/styles.css` (tokens at the top); inner pages also use `css/pages.css` |
 | Photos | `assets/img/` (see the README there) |
 
-Everything marked **DEMO** in `js/content.js` is placeholder data.
+The nav and footer are repeated in each page's HTML. If you add a nav link, add it to every page.
 
-### Before launch
+Scripts: `core.js` runs on every page (torch, nav, forms). `home.js`, `pages.js`, `book.js` and `blog.js` are page-specific.
 
-- Replace DEMO data in `js/content.js`.
-- Set the Formspree form id (`YOUR_FORM_ID`) in `index.html`. Until then the form opens the visitor's email app.
-- Add `assets/Manjil-Shrestha-CV.pdf` or remove the two "Download CV" links.
-- Set `bookingUrl` in `js/content.js` to a Calendly or similar link.
+## Writing a blog post
+
+1. Copy `blog/_template/` to `blog/your-post-slug/`.
+2. In the new `index.html`, replace every `_template` reference in the `<head>`, then update the title, description and the BlogPosting JSON-LD. Remove the `noindex` robots tag.
+3. Write the article inside `<div class="prose">`. Give every `h2` an `id`; the table of contents builds itself.
+4. Add a card to `blog/index.html` (copy an existing `<a class="post">` card), plus an entry in `sitemap.xml` and `blog/feed.xml`.
+5. Optional: add the post to `insights` in `js/content.js` so it shows on the home page.
+
+## Before launch
+
+- Replace everything marked **DEMO** in `js/content.js`, plus demo prices and testimonials on the inner pages.
+- Replace `YOUR_FORM_ID` with a Formspree form id in every form (home, contact, book, blog newsletters). Until then forms open the visitor's email app.
+- Add `assets/Manjil-Shrestha-CV.pdf` or remove the "Download CV" links.
+- Optional: set `calendlyUrl` in `js/content.js` to replace the built-in booking widget with a Calendly embed.
 
 ## Brand
 

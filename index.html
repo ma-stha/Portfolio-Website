@@ -113,18 +113,17 @@
     <a href="#top" class="nav__brand" aria-label="mastha, back to top"><svg viewBox="0 0 1911 515"><use href="#mastha"/></svg></a>
     <nav class="nav__links" aria-label="Primary">
       <a href="#about">About</a>
-      <a href="#services">Services</a>
+      <a href="services/">Services</a>
       <a href="#work">Work</a>
       <a href="#lab">Growth Lab</a>
-      <a href="#process">Process</a>
-      <a href="#experience">Experience</a>
-      <a href="#insights">Insights</a>
+      <a href="blog/">Blog</a>
+      <a href="contact/">Contact</a>
     </nav>
     <div class="nav__right">
-      <a href="#contact" class="nav__me" aria-label="Contact Manjil">
+      <a href="contact/" class="nav__me" aria-label="Contact Manjil">
         <img src="assets/img/avatar.png" alt="" width="34" height="34"><i class="online"></i>
       </a>
-      <a href="#contact" class="btn btn--violet btn--sm" data-magnetic>Book a call</a>
+      <a href="book/" class="btn btn--violet btn--sm" data-magnetic>Book a call</a>
       <button class="nav__burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
     </div>
   </header>
@@ -132,15 +131,14 @@
   <div class="menu" id="menu" aria-hidden="true">
     <nav class="menu__links">
       <a href="#about"><small>01</small>About</a>
-      <a href="#services"><small>02</small>Services</a>
+      <a href="services/"><small>02</small>Services</a>
       <a href="#work"><small>03</small>Work</a>
       <a href="#lab"><small>04</small>Growth Lab</a>
-      <a href="#process"><small>05</small>Process</a>
-      <a href="#experience"><small>06</small>Experience</a>
-      <a href="#insights"><small>07</small>Insights</a>
-      <a href="#contact"><small>08</small>Contact</a>
+      <a href="blog/"><small>05</small>Blog</a>
+      <a href="contact/"><small>06</small>Contact</a>
+      <a href="book/"><small>07</small>Book a free call</a>
     </nav>
-    <div class="menu__foot" id="menuSocials"></div>
+    <div class="menu__foot" data-socials></div>
   </div>
 
   <main>
@@ -222,6 +220,7 @@
           <p class="lead reveal">Six disciplines, one rule: if it can't be measured, it doesn't get budget.</p>
         </div>
         <ol class="svc" id="services-list"></ol>
+        <div class="more-row reveal"><a href="services/" class="btn btn--ghost">Explore services, pricing &amp; packages →</a><a href="book/" class="link">Book a free consultation</a></div>
       </div>
     </section>
 
@@ -266,7 +265,7 @@
               <div><small class="mono">Optimised</small><strong id="rNew">$0</strong></div>
               <div><small class="mono">Extra conversions / mo</small><strong id="rConv">0</strong></div>
             </div>
-            <a href="#contact" class="btn btn--violet btn--block" data-magnetic>Let's make that real →</a>
+            <a href="book/" class="btn btn--violet btn--block" data-magnetic>Let's make that real →</a>
           </div>
           <div class="note uv" data-note style="--nx:30%;--ny:-9%;--rot:-5deg"><span>tip: drag the lift to 100%.<br>feel powerful. then call me.</span></div>
         </div>
@@ -342,7 +341,7 @@
             <p class="label reveal">(09) Insights</p>
             <h2 class="h2 reveal">Notes from the <span class="goth glow">dashboard</span>.</h2>
           </div>
-          <a href="#" class="link reveal">All articles →</a>
+          <a href="blog/" class="link reveal">All articles →</a>
         </div>
         <div class="posts" id="posts"></div>
       </div>
@@ -371,15 +370,15 @@
               <img src="assets/img/avatar.png" alt="Manjil Shrestha" width="72" height="72">
               <div><strong>Manjil Shrestha</strong><span class="mono">mastha · Melbourne, AU</span></div>
             </div>
-            <p class="me__status"><i class="online"></i><span id="availability">Available</span></p>
-            <p class="muted small" id="replyTime"></p>
-            <button class="email" id="emailBtn" data-magnetic><span id="emailText">hello@</span><em class="mono">Copy</em></button>
-            <a href="#contact" class="btn btn--violet btn--block" id="bookBtn">Book a free 30-min call</a>
-            <div class="socials" id="socials"></div>
+            <p class="me__status"><i class="online"></i><span data-availability>Available</span></p>
+            <p class="muted small" data-reply></p>
+            <button class="email" data-copy-email data-magnetic><span data-email-text>hello@</span><em class="mono">Copy</em></button>
+            <a href="book/" class="btn btn--violet btn--block">Book a free 30-min call</a>
+            <div class="socials" data-socials></div>
             <div class="note uv" data-note style="--nx:58%;--ny:-14%;--rot:-6deg"><span>the form works.<br>I promise. try it →</span></div>
           </div>
 
-          <form class="form reveal" id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+          <form class="form js-form reveal" id="contactForm" data-subject="Project enquiry" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
             <div class="form__row">
               <label class="field"><span>Name</span><input type="text" name="name" required autocomplete="name" placeholder="Jane Smith"></label>
               <label class="field"><span>Email</span><input type="email" name="email" required autocomplete="email" placeholder="jane@company.com.au"></label>
@@ -401,7 +400,7 @@
             <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
             <div class="form__foot">
               <button type="submit" class="btn btn--violet btn--lg" data-magnetic><span class="btn__text">Send message →</span><span class="btn__sent">Sent. Talk soon ✓</span></button>
-              <p class="mono muted small" id="formNote">No spam. Just a reply.</p>
+              <p class="mono muted small" data-form-note>No spam. Just a reply.</p>
             </div>
           </form>
         </div>
@@ -414,7 +413,7 @@
     <div class="container">
       <div class="footer__top">
         <p class="footer__line">Digital marketing expert in Melbourne.<br><span class="muted">Measured, not guessed.</span></p>
-        <nav class="footer__links" aria-label="Footer"><a href="#about">About</a><a href="#services">Services</a><a href="#work">Work</a><a href="#lab">Growth Lab</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></nav>
+        <nav class="footer__links" aria-label="Footer"><a href="services/">Services</a><a href="#work">Work</a><a href="blog/">Blog</a><a href="book/">Book a call</a><a href="contact/">Contact</a><a href="blog/feed.xml">RSS</a></nav>
       </div>
       <div class="footer__logo">
         <svg viewBox="0 0 1911 515" class="footer__logo-dim" role="img" aria-label="mastha"><use href="#mastha"/></svg>
@@ -422,7 +421,7 @@
         <div class="note uv" data-note style="--nx:66%;--ny:-22%;--rot:4deg"><span>you made it to the very end.<br>that's analyst energy. let's talk.</span></div>
       </div>
       <div class="footer__bar mono">
-        <span>© <span id="year">2026</span> Manjil Shrestha · mastha</span>
+        <span>© <span data-year>2026</span> Manjil Shrestha · mastha</span>
         <span class="hide-sm">Made in Melbourne under UV light</span>
         <a href="#top">Back to top ↑</a>
       </div>
@@ -442,6 +441,7 @@
   <script src="js/vendor/ScrollTrigger.min.js"></script>
   <script src="js/vendor/lenis.min.js"></script>
   <script src="js/content.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/home.js"></script>
 </body>
 </html>

@@ -12,7 +12,7 @@ window.SITE = {
   role: "Data-Driven Digital Marketer",
   location: "Melbourne, Australia",
   email: "hello@manjilshrestha.online",            // DEMO: your real email
-  bookingUrl: "#contact",                           // e.g. a Calendly link
+  calendlyUrl: "",   // optional: paste a Calendly link to replace the built-in booking widget on /book/
   availability: "Taking 2 new clients for Q1",      // DEMO
   replyTime: "Usually replies within 24 hours",
 
@@ -131,9 +131,9 @@ window.SITE = {
 
   /* ---------- Insights (DEMO) ---------- */
   insights: [
-    { tag: "Analytics", date: "Oct 2026", minutes: 7, title: "Why most GA4 setups lie to you (and five fixes)", href: "#" },
-    { tag: "Local SEO", date: "Sep 2026", minutes: 9, title: "A suburb-by-suburb playbook for ranking in Melbourne", href: "#" },
-    { tag: "Paid Media", date: "Aug 2026", minutes: 5, title: "Marginal ROAS: the only budget rule you need", href: "#" }
+    { tag: "Analytics", date: "Oct 2026", minutes: 7, title: "Why most GA4 setups lie to you (and five fixes)", href: "blog/ga4-setups-lie-to-you/" },
+    { tag: "Local SEO", date: "Sep 2026", minutes: 9, title: "A suburb-by-suburb playbook for ranking in Melbourne", href: "blog/melbourne-local-seo-playbook/" },
+    { tag: "Paid Media", date: "Aug 2026", minutes: 5, title: "Marginal ROAS: the only budget rule you need", href: "blog/marginal-roas-budget-rule/" }
   ],
 
   /* ---------- FAQ (also published as FAQ schema) ---------- */
