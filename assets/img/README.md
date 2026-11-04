@@ -2,10 +2,8 @@
 
 | File | Used for | Notes |
 |------|----------|-------|
-| portrait.jpg | Hero photo, revealed in full colour under the UV torch | 1000 px wide |
-| portrait-duo.jpg | Violet duotone version shown by default | Regenerate if you change portrait.jpg |
-| avatar.png | Nav, contact card | 256 × 256, from the violet-ring avatar |
+| portrait.jpg | Home "About" polaroid (black and white, colour on hover) | 1000 px wide, roughly 3:4 |
+| avatar.png | Profile picture on booking, contact, blog and author boxes | Red-ring version of your avatar |
 | og-image.png | Link previews | 1200 × 630 |
-| paper-dark.png, grain.png | Site textures | Keep these |
-
-To swap the hero photo, replace both portrait files with the same crop. Keep a portrait (roughly 3:4) ratio.
+| paper.png, grain.png | Site textures | Keep these |
+| case-*.jpg (optional) | Home case study covers | 1600 × 800. Without them, each card shows a generated chart |

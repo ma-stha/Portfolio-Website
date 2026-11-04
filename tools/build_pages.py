@@ -6,7 +6,7 @@ from datetime import datetime
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SC = os.path.dirname(os.path.abspath(__file__)) + '/'
 SITE = 'https://manjilshrestha.online/'
-SYM = open(SC + 'mastha_symbol.txt').read()
+SYM = open(SC + 'symbols.txt').read()
 E = html.escape
 
 # ---------------------------------------------------------------- helpers
@@ -825,7 +825,7 @@ dataLayer.push({{
 def fmt_date(iso):
     return datetime.strptime(iso, '%Y-%m-%d').strftime('%-d %B %Y')
 
-def post_card(P, p, cls='post reveal'):
+def post_card(P, p, cls='bcard paper reveal'):
     return f'''<a class="{cls}" href="{P}blog/{p["slug"]}/" data-post data-tags="{p["tagkey"]}" data-text="{E((p["title"] + " " + p["dek"] + " " + p["tag"]).lower())}" data-cursor="Read">
             <div class="post__cover">{cover_svg(p["seed"], uid="c")}</div>
             <div class="post__body"><div class="post__meta"><b>{E(p["tag"])}</b><span>{fmt_date(p["date"])} · {p["minutes"]} min</span></div><h3>{E(p["title"])}</h3><p class="post__ex">{E(p["dek"][:140].rsplit(" ", 1)[0])}…</p><span class="post__more">Read article →</span></div>
@@ -964,9 +964,9 @@ SOON = [
 def blog_index():
     P = '../'
     feat = POSTS[0]
-    soon_cards = ''.join(f'''<div class="post post--soon reveal" data-post data-tags="{s["tagkey"]}" data-text="{E((s["title"] + " " + s["dek"]).lower())}" aria-disabled="true">
-            <div class="post__cover">{cover_svg(10 + j, uid="s")}</div>
-            <div class="post__body"><div class="post__meta"><b>{E(s["tag"])}</b><span>Drafting</span></div><h3>{E(s["title"])}</h3><p class="post__ex">{E(s["dek"])}</p><span class="post__more">Coming soon</span></div>
+    soon_cards = ''.join(f'''<div class="bcard paper post--soon reveal" data-post data-tags="{s["tagkey"]}" data-text="{E((s["title"] + " " + s["dek"]).lower())}" aria-disabled="true">
+            <div class="bcard__cover">{cover_svg(10 + j, uid="s")}<span class="bcard__tag">{E(s["tag"])}</span></div>
+            <div class="bcard__body"><p class="bcard__meta">Coming soon</p><h3>{E(s["title"])}</h3><p>{E(s["dek"])}</p><span class="bcard__more">In the works <b aria-hidden="true">…</b></span></div>
           </div>''' for j, s in enumerate(SOON))
     counts = {}
     for p in POSTS: counts[p['tagkey']] = counts.get(p['tagkey'], 0) + 1
@@ -1015,7 +1015,7 @@ def blog_index():
             <h2>{E(feat["title"])}</h2>
             <p>{E(feat["dek"])}</p>
             <div class="byline"><img src="{P}assets/img/avatar.png" alt="" width="26" height="26"><span>Manjil Shrestha · {fmt_date(feat["date"])} · {feat["minutes"]} min read</span></div>
-            <span class="post__more">Read the article →</span>
+            <span class="bcard__more">Read the article <b aria-hidden="true">→</b></span>
           </div>
           <div class="note uv" data-note style="--nx:4%;--ny:-7%;--rot:-4deg"><span>start with this one. it saves the most money.</span></div>
         </a>
@@ -1084,6 +1084,7 @@ def sitemap():
     write('sitemap.xml', f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{body}\n</urlset>\n')
 
 exec(open(SC + 'service_seo.py').read())
+exec(open(SC + 'red_parts.py').read())   # red paper design overrides
 services_page(); seo_service_page(); book_page(); contact_page(); blog_index()
 for i, p in enumerate(POSTS):
     article_page(p, i)

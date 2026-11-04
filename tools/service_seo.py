@@ -24,6 +24,8 @@ def seo_service_page():
     ]
     check_html = ''.join(f'<li><label><input type="checkbox" class="qc"><span>{E(c)}</span></label></li>' for c in checks)
     serp = f'''<div class="serp fade" id="serp">
+            <div class="serp__chrome"><i></i><i></i><i></i></div>
+            <div class="serp__inner">
             <div class="serp__bar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg><span>emergency plumber fitzroy</span></div>
             <div class="serp__map"><span class="pin"></span><span class="pin pin--2"></span><span class="pin pin--you"></span><small>Map pack · Fitzroy VIC</small></div>
             <ol class="serp__list">
@@ -32,6 +34,8 @@ def seo_service_page():
               <li><b>#3</b><div><small>directory-site.com.au</small><strong>Top 10 Plumbers in Fitzroy</strong></div></li>
             </ol>
             <p class="serp__foot mono"><span id="serpNote">Month 0</span><span>Illustrative · demo</span></p>
+            </div>
+            <div class="sticker sticker--pill" style="--x:0;--y:0;--r:-8deg" data-drag>Rank #1 ↗</div>
             <div class="note uv" data-note style="--nx:-38%;--ny:30%;--rot:-6deg"><span>this is what month six<br>can look like. ↗</span></div>
           </div>'''
     body = f'''    <section class="phero" id="top">
@@ -97,14 +101,16 @@ def seo_service_page():
           <p class="lead reveal">Tick what's true for your business. Thirty seconds, no email required.</p>
           <ul class="checklist qc-list reveal" style="margin-top:26px">{check_html}</ul>
         </div>
-        <aside class="qc-score reveal" aria-live="polite">
-          <p class="label-sm">Your score</p>
-          <p class="qc-num"><span id="qcNum">0</span><small>/ {len(checks)}</small></p>
-          <div class="qc-meter"><i id="qcBar"></i></div>
-          <h3 id="qcTitle">Start ticking</h3>
-          <p id="qcText" class="muted">Your result and the first thing to fix will appear here.</p>
-          <a href="{P}book/" class="btn btn--violet btn--block" data-magnetic>Book a free SEO audit call →</a>
-          <div class="note uv" data-note style="--nx:8%;--ny:-12%;--rot:-4deg"><span>honesty mode: on. nobody's watching.</span></div>
+        <aside class="slip reveal" aria-live="polite">
+          <div class="slip__paper">
+            <p class="slip__head">SEO health receipt<br><span style="font-weight:400">Melbourne · free · no email</span></p>
+            <p class="qc-num"><span id="qcNum">0</span><small>/{len(checks)}</small></p>
+            <div class="qc-meter"><i id="qcBar"></i></div>
+            <h3 id="qcTitle">Start ticking</h3>
+            <p id="qcText">Your result and the first thing to fix will appear here.</p>
+            <a href="{P}book/" class="btn btn--red btn--block" data-magnetic>Book a free SEO audit call →</a>
+            <div class="receipt__barcode" aria-hidden="true"></div>
+          </div>
         </aside>
       </div>
     </section>
