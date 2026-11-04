@@ -14,6 +14,8 @@ Then open http://localhost:8000.
 
 ## Design: "Signal on Paper"
 
+**Read [`DESIGN-GUIDE.md`](DESIGN-GUIDE.md) before building or editing any page.** It holds the rules, tokens, components and checklists that keep the whole site consistent.
+
 - **Palette**: paper `#E9E7E1`, ink `#0B0B0B`, logo red `#F83232`. Nothing else.
 - **Texture**: a seamless paper tile (`assets/img/paper.png`) plus an animated grain layer (`assets/img/grain.png`).
 - **Type**: Anybody (variable display face), Archivo (body), Space Mono (data labels), Silkscreen (pixel accents), Caveat (handwritten sticky notes in articles).
