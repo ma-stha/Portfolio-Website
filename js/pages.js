@@ -30,3 +30,44 @@
     tick(); setInterval(tick, 20000);
   }
 })();
+
+/* Single service page: SERP climb animation + SEO health check */
+(function () {
+  "use strict";
+  const { $, $$, reduce } = window.UV;
+
+  const serp = $("#serp");
+  if (serp) {
+    const rankEl = $("#serpRank"), note = $("#serpNote"), you = $(".serp__you", serp);
+    const steps = [[9, "Month 0 · invisible"], [7, "Month 1 · tracking fixed"], [5, "Month 2 · suburb pages live"], [3, "Month 4 · map pack"], [1, "Month 6 · #1 for this search"]];
+    const show = (i) => { rankEl.textContent = "#" + steps[i][0]; note.textContent = steps[i][1]; you.classList.toggle("is-top", steps[i][0] === 1); };
+    if (reduce) show(steps.length - 1);
+    else {
+      let i = 0, timer;
+      const run = () => { clearInterval(timer); i = 0; show(0); timer = setInterval(() => { i++; if (i >= steps.length) { clearInterval(timer); setTimeout(run, 3500); return; } show(i); }, 1100); };
+      new IntersectionObserver(([e], o) => { if (e.isIntersecting) { o.disconnect(); setTimeout(run, 900); } }, { threshold: 0.4 }).observe(serp);
+    }
+  }
+
+  const boxes = $$(".qc");
+  if (boxes.length) {
+    const total = boxes.length;
+    const verdicts = [
+      [0, "Start ticking", "Your result and the first thing to fix will appear here."],
+      [1, "Plenty of room to grow", "Good news: the biggest gains come fastest at this stage. Start with your service pages and Google Business Profile."],
+      [4, "Solid start, real gaps", "The basics are partly there. Suburb pages and tracking enquiries are usually the next big unlock."],
+      [7, "Strong foundations", "You're ahead of most Melbourne competitors. Content and local PR are where the next wins live."],
+      [8, "SEO overachiever", "Impressive. Let's find the last few percent, or talk about scaling to new suburbs."],
+    ];
+    let touched = false;
+    const update = () => {
+      const n = boxes.filter((b) => b.checked).length;
+      // before any interaction show the prompt; after it, 0 ticks counts as "room to grow"
+      const v = touched ? verdicts.filter(([min]) => Math.max(n, 1) >= min).pop() : verdicts[0];
+      $("#qcNum").textContent = n; $("#qcBar").style.width = (n / total * 100) + "%";
+      $("#qcTitle").textContent = v[1]; $("#qcText").textContent = v[2];
+    };
+    boxes.forEach((b) => b.addEventListener("change", () => { touched = true; update(); }));
+    update();
+  }
+})();
