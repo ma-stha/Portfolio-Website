@@ -1,6 +1,6 @@
 /* =========================================================================
-   main.js — rendering, motion and interaction.
-   Content comes from js/content.js; you rarely need to touch this file.
+   main.js — mastha portfolio. Rendering, UV torch engine and motion.
+   Content lives in js/content.js.
    ========================================================================= */
 (function () {
   "use strict";
@@ -8,247 +8,246 @@
   const S = window.SITE || {};
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const root = document.documentElement;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
   const G = typeof gsap !== "undefined";
   if (G && typeof ScrollTrigger !== "undefined") gsap.registerPlugin(ScrollTrigger);
-
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const STAR = '<svg class="i-star" aria-hidden="true"><use href="#star"/></svg>';
-  function fmt(n, o = {}) {
-    let { decimals = 0, prefix = "", suffix = "", abbr = false } = o;
-    let v = Math.abs(n), unit = "";
-    if (abbr) {
-      if (v >= 1e6) { v /= 1e6; unit = "M"; decimals = 1; }
-      else if (v >= 1e3) { v /= 1e3; unit = "k"; decimals = v >= 100 ? 0 : 1; }
-    }
-    const body = v.toLocaleString("en-AU", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-    return (n < 0 ? "-" : "") + prefix + body + unit + suffix;
-  }
   const money = (n) => "$" + Math.round(n).toLocaleString("en-AU");
+  const SPARK = '<svg aria-hidden="true"><use href="#spark"/></svg>';
+  const PLUS = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>';
 
   /* ------------------------------------------------------------------ */
-  /* 1. Smooth scroll                                                    */
+  /* Smooth scroll                                                       */
   /* ------------------------------------------------------------------ */
   let lenis = null;
   if (typeof Lenis !== "undefined" && !reduce) {
-    lenis = new Lenis({ lerp: 0.11, smoothWheel: true });
+    lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
     if (G) { lenis.on("scroll", ScrollTrigger.update); gsap.ticker.add((t) => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); }
     else { const raf = (t) => { lenis.raf(t); requestAnimationFrame(raf); }; requestAnimationFrame(raf); }
   }
-  const goTo = (el) => { if (!el) return; lenis ? lenis.scrollTo(el, { offset: -20, duration: 1.4 }) : el.scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); };
+  const goTo = (el) => { if (!el) return; lenis ? lenis.scrollTo(el, { offset: el.id === "top" ? 0 : -24, duration: 1.4 }) : el.scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); };
   document.addEventListener("click", (e) => {
     const a = e.target.closest('a[href^="#"]'); if (!a) return;
-    const id = a.getAttribute("href");
-    if (id === "#") return;
-    const el = id === "#top" ? document.body : $(id); if (!el) return;
+    const id = a.getAttribute("href"); if (id === "#") return;
+    const el = $(id); if (!el) return;
     e.preventDefault(); closeMenu(); closeModal(); goTo(el);
   });
 
   /* ------------------------------------------------------------------ */
-  /* 2. Render content                                                   */
+  /* Charts                                                              */
   /* ------------------------------------------------------------------ */
-  const ICON = {
-    seo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>',
-    paid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M3 18l6-6 4 4 8-9"/><path d="M15 7h6v6"/></svg>',
-    analytics: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="6" width="4" height="15"/><rect x="17" y="2" width="4" height="19"/></svg>',
-    cro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="miter"><path d="M3 4h18l-7 9v6l-4 2v-8z"/></svg>',
-    email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="5" width="18" height="14"/><path d="M3 6l9 7 9-7"/></svg>',
-    social: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4.2M8.6 13.4l6.8 4.2"/></svg>'
-  };
-  const SPARK = {
-    seo: [3, 4, 4, 6, 8, 7, 11, 13, 14, 18, 21, 25], paid: [10, 12, 9, 14, 16, 15, 19, 21, 24, 23, 27, 30],
-    analytics: [8, 6, 9, 7, 11, 10, 13, 12, 15, 14, 17, 19], cro: [11, 12, 11, 14, 16, 15, 19, 21, 23, 24, 26, 27],
-    email: [6, 7, 9, 12, 14, 18, 21, 23, 26, 28, 30, 31], social: [2, 3, 3, 5, 6, 8, 9, 12, 13, 16, 19, 22]
-  };
-
-  function pts(series, W, H, padX, padY) {
+  let uid = 0;
+  function lineChart(series, { W = 400, H = 160, pad = 10, grid = true, dots = true } = {}) {
+    const id = "lc" + uid++;
     const max = Math.max(...series), min = Math.min(...series), r = max - min || 1;
-    return series.map((v, i) => [padX + (i / (series.length - 1)) * (W - padX * 2), H - padY - ((v - min) / r) * (H - padY * 2)]);
+    const p = series.map((v, i) => [pad + (i / (series.length - 1)) * (W - pad * 2), H - pad - ((v - min) / r) * (H - pad * 2.4)]);
+    let d = `M${p[0][0]},${p[0][1]}`;
+    for (let i = 1; i < p.length; i++) { const [x0, y0] = p[i - 1], [x1, y1] = p[i], c = (x0 + x1) / 2; d += ` C${c},${y0} ${c},${y1} ${x1},${y1}`; }
+    const l = p[p.length - 1];
+    const g = grid ? [.25, .5, .75].map((f) => `<line x1="0" x2="${W}" y1="${H * f}" y2="${H * f}" stroke="rgba(236,232,244,.06)" stroke-dasharray="3 5"/>`).join("") : "";
+    const pts = dots ? p.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2" fill="#B596FF" opacity=".5"/>`).join("") : "";
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#7844E9" stop-opacity=".45"/><stop offset="1" stop-color="#7844E9" stop-opacity="0"/></linearGradient></defs>${g}
+      <path d="${d} L${l[0]},${H} L${p[0][0]},${H}Z" fill="url(#${id})"/>
+      <path d="${d}" fill="none" stroke="#B596FF" stroke-width="2.4" stroke-linecap="round" filter="url(#uvglow)"/>${pts}
+      <circle cx="${l[0]}" cy="${l[1]}" r="4.5" fill="#DCCBFF"><animate attributeName="r" values="4;7;4" dur="2s" repeatCount="indefinite"/></circle></svg>`;
   }
-  function smooth(p) {
-    let d = `M${p[0][0].toFixed(1)},${p[0][1].toFixed(1)}`;
-    for (let i = 1; i < p.length; i++) { const [x0, y0] = p[i - 1], [x1, y1] = p[i], cx = (x0 + x1) / 2; d += ` C${cx.toFixed(1)},${y0.toFixed(1)} ${cx.toFixed(1)},${y1.toFixed(1)} ${x1.toFixed(1)},${y1.toFixed(1)}`; }
-    return d;
-  }
-  function spark(series) {
-    const W = 240, H = 90, p = pts(series, W, H, 6, 12), d = smooth(p), l = p[p.length - 1];
-    const bars = p.map(([x, y]) => `<rect x="${(x - 5).toFixed(1)}" y="${y.toFixed(1)}" width="10" height="${(H - y).toFixed(1)}" fill="#0B0B0B" opacity=".08"/>`).join("");
-    return `<svg class="svc__spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${bars}<path d="${d}" fill="none" stroke="#F83232" stroke-width="3.5" stroke-linecap="round"/><rect x="${l[0] - 6}" y="${l[1] - 6}" width="12" height="12" fill="#F83232" stroke="#0B0B0B" stroke-width="2" transform="rotate(45 ${l[0]} ${l[1]})"/></svg>`;
-  }
-  function cover(series, id) {
-    const W = 720, H = 360, p = pts(series, W, H, 50, 56), d = smooth(p), l = p[p.length - 1];
-    const grid = Array.from({ length: 9 }, (_, i) => `<line x1="0" y1="${i * 45}" x2="${W}" y2="${i * 45}" stroke="#0B0B0B" stroke-opacity=".09"/>`).join("") +
-      Array.from({ length: 17 }, (_, i) => `<line x1="${i * 45}" y1="0" x2="${i * 45}" y2="${H}" stroke="#0B0B0B" stroke-opacity=".09"/>`).join("");
-    const bars = p.map(([x, y], i) => `<rect x="${(x - 14).toFixed(1)}" y="${(y + 18).toFixed(1)}" width="28" height="${(H - y - 18).toFixed(1)}" fill="${i === p.length - 1 ? "#F83232" : "url(#" + id + "h)"}" stroke="#0B0B0B" stroke-width="2"/>`).join("");
-    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <defs><pattern id="${id}h" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#F5F4F0"/><line x1="0" y1="0" x2="0" y2="8" stroke="#0B0B0B" stroke-width="2.4"/></pattern></defs>
-      <rect width="${W}" height="${H}" fill="#E4E1DA"/>${grid}${bars}
-      <path d="${d}" transform="translate(5 5)" fill="none" stroke="#0B0B0B" stroke-width="7" stroke-linecap="round"/>
-      <path d="${d}" fill="none" stroke="#F83232" stroke-width="7" stroke-linecap="round"/>
-      <g transform="translate(${l[0]} ${l[1]})"><circle r="15" fill="#F83232" stroke="#0B0B0B" stroke-width="3"/></g>
-    </svg>`;
+  function cover(seed) {
+    const rnd = (n) => { const x = Math.sin(seed * 99 + n * 7.13) * 10000; return x - Math.floor(x); };
+    let s = "";
+    for (let i = 0; i < 9; i++) s += `<circle cx="${280 + rnd(i) * 60}" cy="${90 + rnd(i + 3) * 40}" r="${20 + i * 22}" fill="none" stroke="rgba(181,150,255,${(0.5 - i * 0.05).toFixed(2)})" stroke-width="1"/>`;
+    for (let i = 0; i < 14; i++) { const h = 20 + rnd(i + 20) * 90 + i * 4; s += `<rect x="${20 + i * 17}" y="${180 - h}" width="9" height="${h}" rx="2" fill="url(#cg${seed})" opacity="${0.35 + i * 0.045}"/>`; }
+    return `<svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="cg${seed}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#B596FF"/><stop offset="1" stop-color="#2A1566"/></linearGradient><radialGradient id="cr${seed}" cx=".75" cy=".3" r=".7"><stop offset="0" stop-color="#7844E9" stop-opacity=".45"/><stop offset="1" stop-color="#7844E9" stop-opacity="0"/></radialGradient></defs><rect width="400" height="225" fill="url(#cr${seed})"/>${s}</svg>`;
   }
 
+  /* ------------------------------------------------------------------ */
+  /* Render                                                              */
+  /* ------------------------------------------------------------------ */
   function render() {
-    // Receipt
-    const rl = $("#receiptLines");
-    if (rl && S.receipt) {
-      rl.innerHTML = S.receipt.lines.map((l) => `<li><span>${esc(l.label)}</span><b class="${l.value < 0 ? "neg" : ""}" data-count="${l.value}" data-decimals="${l.decimals || 0}" data-prefix="${esc(l.prefix || "")}" data-suffix="${esc(l.suffix || "")}" ${l.abbr ? "data-abbr" : ""} data-manual>0</b></li>`).join("");
-      $("#receiptTotalLabel").textContent = S.receipt.total.label;
-      $("#receiptTotal").textContent = S.receipt.total.value;
-    }
-    // Tapes
-    const tape = (arr) => { const one = arr.map((t) => `<span>${esc(t)} ${STAR}</span>`).join(""); return one + one; };
-    if (S.tapeA) $("#tapeA").innerHTML = tape(S.tapeA);
-    if (S.tapeB) $("#tapeB").innerHTML = tape(S.tapeB);
-    // Manifesto
-    const mf = $("#manifesto");
-    if (mf && S.manifesto) {
-      const parts = S.manifesto.split(/(\[[^\]]+\])/g).filter(Boolean);
-      mf.innerHTML = parts.map((part) => {
-        const hi = part.startsWith("[");
-        const words = (hi ? part.slice(1, -1) : part).split(/\s+/).filter(Boolean);
-        const html = words.map((w) => `<span class="w">${esc(w)}</span>`).join(" ");
-        return hi ? `<span class="hiw">${html}</span>` : html;
-      }).join(" ");
-    }
-    // Numbers
-    if (S.numbers) $("#numbers").innerHTML = S.numbers.map((n) => `<div class="num reveal"><strong><span data-count="${n.value}" data-decimals="${n.decimals || 0}" data-prefix="${esc(n.prefix || "")}">0</span><i>${esc(n.suffix || "")}</i></strong><span>${esc(n.label)}</span></div>`).join("");
-    // Services
-    if (S.services) $("#servicesGrid").innerHTML = S.services.map((s, i) => `
-      <article class="svc reveal">
-        <div class="svc__top"><span class="svc__icon">${ICON[s.id] || ICON.seo}</span><span class="svc__n">0${i + 1}</span></div>
-        <h3>${esc(s.title)}</h3><p>${esc(s.blurb)}</p>
-        <div class="svc__tags">${(s.tags || []).map((t) => `<span>${esc(t)}</span>`).join("")}</div>
-        ${spark(SPARK[s.id] || SPARK.seo)}
+    if (S.clients) { const one = S.clients.map((c) => `<span>${esc(c)} ${SPARK}</span>`).join(""); $("#clients").innerHTML = one + one; }
+
+    if (S.stats) $("#stats").innerHTML = S.stats.map((s) => `
+      <div class="stat reveal"><strong><span data-count="${s.value}" data-decimals="${s.decimals || 0}" data-prefix="${esc(s.prefix || "")}">0</span><i>${esc(s.suffix || "")}</i></strong><span>${esc(s.label)}</span>${lineChart(s.spark, { W: 200, H: 38, pad: 4, grid: false, dots: false })}</div>`).join("");
+
+    if (S.services) $("#services-list").innerHTML = S.services.map((s, i) => `
+      <li class="svc__item reveal${i === 0 ? " is-open" : ""}">
+        <button class="svc__head" aria-expanded="${i === 0}" aria-controls="svc${i}">
+          <span class="svc__n">0${i + 1}</span><span class="svc__title">${esc(s.title)}</span><span class="svc__short">${esc(s.short)}</span><span class="svc__plus">${PLUS}</span>
+        </button>
+        <div class="svc__body" id="svc${i}"><div><div class="svc__inner"><p>${esc(s.text)}</p><ul>${s.deliver.map((d) => `<li>${esc(d)}</li>`).join("")}</ul></div></div></div>
+      </li>`).join("");
+
+    if (S.caseStudies) $("#files").innerHTML = S.caseStudies.map((c, i) => `
+      <article class="file" style="--i:${i}" data-case="${i}" data-cursor="Open file" tabindex="0" role="button" aria-label="Open case file: ${esc(c.title)}">
+        <div class="file__main">
+          <div class="file__tab"><span>Case file <b>${esc(c.file)}</b></span><span class="file__class">Classified</span></div>
+          <h3>${esc(c.title)}</h3>
+          <p class="file__meta">${esc(c.client)} · ${esc(c.industry)} · ${esc(c.year)}</p>
+          <p>${esc(c.summary)}</p>
+          <div class="file__tags">${c.tags.map((t) => `<span>${esc(t)}</span>`).join("")}</div>
+          <span class="file__open">Open full report <i>→</i></span>
+        </div>
+        <div class="file__data">
+          <span class="stamp">Declassified</span>
+          <div class="file__chart">${lineChart(c.series)}</div>
+          <div class="kpis">${c.kpis.map((k, j) => `<div class="kpi"><span class="redact" style="--d:${j * 0.12}s"><span class="redact__bar"></span><b class="uv">${esc(k.v)}</b></span><small>${esc(k.l)}</small></div>`).join("")}</div>
+        </div>
       </article>`).join("");
-    // Cases
-    const track = $("#workTrack");
-    if (track && S.caseStudies) {
-      track.innerHTML = S.caseStudies.map((c, i) => `
-        <article class="case" data-case="${i}" data-cursor="Open" tabindex="0" role="button" aria-label="Open case study: ${esc(c.title)}">
-          <div class="case__media">${cover(c.series, "c" + i)}${c.image ? `<img src="${esc(c.image)}" alt="" loading="lazy" onerror="this.remove()">` : ""}
-            <div class="case__tags"><span>${esc(c.industry)}</span><span>${esc(c.year)}</span></div></div>
-          <div class="case__body">
-            <span class="case__client">${esc(c.client)}</span>
-            <h3>${esc(c.title)}</h3>
-            <p class="case__summary">${esc(c.summary)}</p>
-            <div class="case__kpis">${c.kpis.map((k) => `<div><strong class="${k.value < 0 ? "neg" : ""}" data-count="${k.value}" data-decimals="${k.decimals || 0}" data-suffix="${esc(k.suffix || "")}">0</strong><small>${esc(k.label)}</small></div>`).join("")}</div>
-            <span class="case__more">Read the case study <b aria-hidden="true">→</b></span>
-          </div>
-        </article>`).join("") + `
-        <div class="case case--end"><div>${STAR}<h3>Your chart goes here.</h3><p>Tell me what you're trying to grow and I'll show you how I'd measure it.</p><a href="#contact" class="btn btn--ink" data-magnetic>Start a project →</a></div></div>`;
-      $("#workTotal").textContent = String(S.caseStudies.length).padStart(2, "0");
-    }
-    // Loop
-    if (S.process) {
-      $("#loopList").innerHTML = S.process.map((p, i) => `<li data-step="${i}"><b>0${i + 1}</b><strong>${esc(p.title)}</strong><p>${esc(p.text)}</p></li>`).join("");
-      $("#ringNodes").innerHTML = S.process.map((p, i) => {
-        const a = (i * 360 / S.process.length - 90) * Math.PI / 180;
-        return `<div class="node" style="left:${(50 + Math.cos(a) * 42.5).toFixed(2)}%;top:${(50 + Math.sin(a) * 42.5).toFixed(2)}%"><span>0${i + 1}</span></div>`;
-      }).join("");
-    }
-    // Stack
-    if (S.stack) $("#stackRows").innerHTML = S.stack.map((row, i) => { const one = row.map((t) => `<span class="tool"><svg><use href="#star"/></svg>${esc(t)}</span>`).join(""); return `<div class="stack__row${i % 2 ? " stack__row--rev" : ""}">${one}${one}</div>`; }).join("");
-    // Experience
-    if (S.experience) $("#ledger").innerHTML = S.experience.map((e) => `<li class="reveal"><span class="ledger__period">${esc(e.period)}</span><div><h3>${esc(e.role)}</h3><span class="ledger__org">${esc(e.org)}</span></div><p>${esc(e.text)}</p></li>`).join("");
+
+    if (S.process) $("#steps").innerHTML = S.process.map((p, i) => `<li class="step reveal" data-step="${i}"><b>0${i + 1}</b><strong>${esc(p.title)}</strong><p>${esc(p.text)}</p></li>`).join("");
+
+    if (S.stack) $("#stack").innerHTML = S.stack.map((g) => `<div class="tool-card reveal"><h3>${esc(g.group)}</h3><ul>${g.tools.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>`).join("");
+
+    if (S.experience) $("#timeline").innerHTML = S.experience.map((e) => `<li class="job reveal"><span class="job__period">${esc(e.period)}</span><h3>${esc(e.role)}</h3><span class="job__org">${esc(e.org)}</span><p>${esc(e.text)}</p><div class="job__tags">${(e.tags || []).map((t) => `<span>${esc(t)}</span>`).join("")}</div></li>`).join("");
     if (S.education) $("#education").innerHTML = S.education.map((e) => `<li><small>${esc(e.period)}</small><strong>${esc(e.title)}</strong><span>${esc(e.org)}</span></li>`).join("");
     if (S.certifications) $("#certs").innerHTML = S.certifications.map((c) => `<li>${esc(c)}</li>`).join("");
-    // Quotes
-    if (S.testimonials) $("#quotes").innerHTML = S.testimonials.map((t) => `<blockquote class="quote reveal"><p>${esc(t.quote)}</p><footer><span class="quote__av">${esc(t.name.split(" ").map((w) => w[0]).join("").slice(0, 2))}</span><div><strong>${esc(t.name)}</strong><small>${esc(t.org)}</small></div></footer></blockquote>`).join("");
-    // Posts
-    if (S.insights) $("#posts").innerHTML = S.insights.map((p) => `<a class="post reveal" href="${esc(p.href || "#")}" data-cursor="Read"><span class="post__tag">${esc(p.tag)}</span><h3>${esc(p.title)}</h3><div class="post__foot"><span>${p.minutes} min read</span><b>→</b></div></a>`).join("");
-    // FAQ
+
+    if (S.testimonials) {
+      $("#quoteSlides").innerHTML = S.testimonials.map((t, i) => `<blockquote class="qs${i === 0 ? " is-on" : ""}"><p>${esc(t.quote)}</p><footer><span class="qs__av">${esc(t.name.split(" ").map((w) => w[0]).join("").slice(0, 2))}</span><div><strong>${esc(t.name)}</strong><small>${esc(t.role)}</small></div></footer></blockquote>`).join("");
+      $("#qDots").innerHTML = S.testimonials.map((_, i) => `<button aria-label="Testimonial ${i + 1}" class="${i === 0 ? "is-on" : ""}"></button>`).join("");
+    }
+
+    if (S.insights) $("#posts").innerHTML = S.insights.map((p, i) => `<a class="post reveal" href="${esc(p.href || "#")}" data-cursor="Read"><div class="post__cover">${cover(i + 1)}</div><div class="post__body"><div class="post__meta"><b>${esc(p.tag)}</b><span>${esc(p.date)} · ${p.minutes} min</span></div><h3>${esc(p.title)}</h3><span class="post__more">Read article →</span></div></a>`).join("");
+
     if (S.faq) {
-      $("#faqList").innerHTML = S.faq.map((f, i) => `<div class="faq__item reveal"><button class="faq__q" aria-expanded="false" aria-controls="fa${i}"><span>${esc(f.q)}</span><svg aria-hidden="true"><use href="#star"/></svg></button><div class="faq__a" id="fa${i}" role="region"><div><p>${esc(f.a)}</p></div></div></div>`).join("");
+      $("#faqList").innerHTML = S.faq.map((f, i) => `<div class="faq__item reveal${i === 0 ? " is-open" : ""}"><button class="faq__q" aria-expanded="${i === 0}" aria-controls="fq${i}"><span>${esc(f.q)}</span>${SPARK}</button><div class="faq__a" id="fq${i}" role="region"><div><p>${esc(f.a)}</p></div></div></div>`).join("");
       const ld = document.createElement("script"); ld.type = "application/ld+json";
       ld.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: S.faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) });
       document.head.appendChild(ld);
     }
-    // Contact
+
     const soc = (S.socials || []).map((s) => `<a class="social" href="${esc(s.href)}" target="_blank" rel="noopener">${esc(s.label)} ↗</a>`).join("");
-    $("#socials").innerHTML = soc; $("#mobileSocials").innerHTML = soc;
+    $("#socials").innerHTML = soc; $("#menuSocials").innerHTML = soc;
     if (S.email) $("#emailText").textContent = S.email;
     if (S.availability) $("#availability").textContent = S.availability;
+    if (S.replyTime) $("#replyTime").textContent = S.replyTime;
+    if (S.bookingUrl) $("#bookBtn").href = S.bookingUrl;
     $("#year").textContent = new Date().getFullYear();
   }
   render();
 
   /* ------------------------------------------------------------------ */
-  /* 3. Hero: split headline into letters + cursor-reactive weight       */
+  /* Toast + sparkle burst                                               */
   /* ------------------------------------------------------------------ */
-  $$(".hero__title .vf").forEach((el) => { el.innerHTML = [...el.textContent].map((c) => `<span class="ch">${esc(c)}</span>`).join(""); });
-  const chars = $$(".hero__title .ch");
-  if (fine && !reduce && chars.length) {
-    const state = chars.map(() => ({ w: 900, d: 78 }));
-    let mx = -9999, my = -9999, active = false, raf = null;
-    const hero = $("#hero");
-    hero.addEventListener("mousemove", (e) => { mx = e.clientX; my = e.clientY; if (!raf) raf = requestAnimationFrame(tick); });
-    hero.addEventListener("mouseleave", () => { mx = my = -9999; if (!raf) raf = requestAnimationFrame(tick); });
-    function tick() {
-      raf = null; let moving = false;
-      chars.forEach((c, i) => {
-        const r = c.getBoundingClientRect();
-        const dist = Math.hypot(mx - (r.left + r.width / 2), my - (r.top + r.height / 2));
-        const k = Math.max(0, 1 - dist / 300), e = k * k * (3 - 2 * k);
-        const tw = 900 - e * 720, td = 78 + e * 22, s = state[i];
-        s.w += (tw - s.w) * 0.22; s.d += (td - s.d) * 0.22;
-        if (Math.abs(tw - s.w) > 0.5 || Math.abs(td - s.d) > 0.1) moving = true;
-        c.style.setProperty("--w", s.w.toFixed(0)); c.style.setProperty("--d", s.d.toFixed(1));
-      });
-      if (moving) raf = requestAnimationFrame(tick);
+  const toast = (msg, ms = 2400) => { const t = $("#toast"); t.textContent = msg; t.classList.add("is-on"); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("is-on"), ms); };
+  function burst(x, y, n = 18) {
+    if (!G || reduce) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      s.innerHTML = '<use href="#spark"/>';
+      Object.assign(s.style, { position: "fixed", left: 0, top: 0, width: "22px", height: "22px", color: i % 3 ? "#B596FF" : "#ECE8F4", zIndex: 9991, pointerEvents: "none", filter: "drop-shadow(0 0 6px #7844E9)" });
+      document.body.appendChild(s);
+      const a = (i / n) * Math.PI * 2, d = 90 + Math.random() * 160;
+      gsap.fromTo(s, { x: x - 11, y: y - 11, scale: 0, rotate: 0 }, { x: x - 11 + Math.cos(a) * d, y: y - 11 + Math.sin(a) * d, scale: 0.4 + Math.random(), rotate: 180, duration: 1.1, ease: "power3.out" });
+      gsap.to(s, { opacity: 0, delay: 0.7, duration: 0.5, onComplete: () => s.remove() });
     }
   }
 
   /* ------------------------------------------------------------------ */
-  /* 4. Counters                                                         */
+  /* UV torch engine                                                     */
   /* ------------------------------------------------------------------ */
-  function countUp(el, dur = 1500) {
-    const target = parseFloat(el.dataset.count);
-    const o = { decimals: +(el.dataset.decimals || 0), prefix: el.dataset.prefix || "", suffix: el.dataset.suffix || "", abbr: "abbr" in el.dataset };
-    if (reduce) { el.textContent = fmt(target, o); return; }
-    const t0 = performance.now();
-    const step = (now) => { const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 4); el.textContent = fmt(target * e, p < 1 && o.abbr ? { ...o } : o); if (p < 1) requestAnimationFrame(step); else el.textContent = fmt(target, o); };
-    requestAnimationFrame(step);
+  const torch = { x: -999, y: -999, tx: -999, ty: -999, user: false, lastTouch: 0 };
+  const visibleUV = new Set();
+  const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting ? visibleUV.add(e.target) : visibleUV.delete(e.target)), { rootMargin: "200px" });
+  $$(".uv").forEach((el) => io.observe(el));
+  const notes = $$("[data-note]"), dwell = new Map();
+  let found = 0;
+  $("#foundT").textContent = notes.length;
+
+  function markFound(n) {
+    if (n.classList.contains("found")) return;
+    n.classList.add("found"); found++;
+    $("#foundN").textContent = found;
+    const hud = $("#hud"); hud.classList.remove("pulse"); void hud.offsetWidth; hud.classList.add("pulse");
+    if (found === notes.length) {
+      toast("✦ All 7 notes found. You'd make a great analyst. Let's talk.", 4200);
+      const r = $("#hudCount").getBoundingClientRect(); burst(r.left + 40, r.top, 30);
+    } else toast(`✦ Hidden note ${found}/${notes.length} found`);
   }
-  const cio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { cio.unobserve(e.target); countUp(e.target); } }), { threshold: 0.4 });
-  $$("[data-count]:not([data-manual])").forEach((el) => cio.observe(el));
+
+  if (fine) {
+    addEventListener("mousemove", (e) => { torch.tx = e.clientX; torch.ty = e.clientY; torch.user = true; }, { passive: true });
+    document.addEventListener("mouseleave", () => { torch.tx = torch.ty = -999; });
+  } else {
+    const t = (e) => { const p = e.touches[0]; if (!p) return; torch.tx = p.clientX; torch.ty = p.clientY - 70; torch.lastTouch = performance.now(); torch.user = true; };
+    addEventListener("touchstart", t, { passive: true });
+    addEventListener("touchmove", t, { passive: true });
+  }
+  const hero = $("#top");
+  let heroVisible = true;
+  new IntersectionObserver(([e]) => (heroVisible = e.isIntersecting), { threshold: 0.2 }).observe(hero);
+
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(64, now - last); last = now;
+    // touch devices: wander through the hero when the finger isn't on screen
+    if (!fine && heroVisible && now - torch.lastTouch > 2500) {
+      const r = hero.getBoundingClientRect(), t = now / 1000;
+      torch.tx = r.left + r.width * (0.5 + 0.38 * Math.sin(t * 0.7)); torch.ty = r.top + r.height * (0.45 + 0.3 * Math.sin(t * 1.1 + 1));
+    }
+    const k = fine ? 0.35 : 0.12;
+    torch.x += (torch.tx - torch.x) * k; torch.y += (torch.ty - torch.y) * k;
+    root.style.setProperty("--mx", torch.x.toFixed(1) + "px"); root.style.setProperty("--my", torch.y.toFixed(1) + "px");
+
+    // read all rects first, then write (avoids layout thrash)
+    const items = [...visibleUV].map((el) => [el, el.getBoundingClientRect()]);
+    items.forEach(([el, r]) => { el.style.setProperty("--x", (torch.x - r.left).toFixed(1) + "px"); el.style.setProperty("--y", (torch.y - r.top).toFixed(1) + "px"); });
+
+    // note hunt
+    if (torch.user || !fine) notes.forEach((n) => {
+      if (n.classList.contains("found") || !visibleUV.has(n)) return;
+      const r = n.getBoundingClientRect(), d = Math.hypot(torch.x - (r.left + r.width / 2), torch.y - (r.top + r.height / 2));
+      const v = d < Math.max(110, r.width / 2) ? (dwell.get(n) || 0) + dt : 0;
+      dwell.set(n, v); if (v > 450) markFound(n);
+    });
+
+    // declassify case files when the torch rests on the numbers
+    if (fine) $$(".file:not(.declassified)").forEach((f) => {
+      const k2 = f.querySelector(".kpis").getBoundingClientRect();
+      const inside = torch.x > k2.left - 30 && torch.x < k2.right + 30 && torch.y > k2.top - 30 && torch.y < k2.bottom + 30;
+      const v = inside ? (dwell.get(f) || 0) + dt : 0; dwell.set(f, v);
+      if (v > 380) declassify(f);
+    });
+    requestAnimationFrame(frame);
+  }
+  if (!reduce) requestAnimationFrame(frame);
+  else document.body.classList.add("uv-all");
+
+  function declassify(f) { if (f.classList.contains("declassified")) return; f.classList.add("declassified"); f.querySelector(".file__class").textContent = "Declassified"; }
+  if (!fine) {
+    const fio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { setTimeout(() => declassify(e.target), 700); fio.unobserve(e.target); } }), { threshold: 0.55 });
+    $$(".file").forEach((f) => fio.observe(f));
+  }
+
+  $("#revealAll").addEventListener("click", (e) => {
+    const on = document.body.classList.toggle("uv-all");
+    e.currentTarget.setAttribute("aria-pressed", on); e.currentTarget.textContent = on ? "Hide ink" : "Reveal all";
+    if (on) $$(".file").forEach(declassify);
+  });
+  $("#hudCount").addEventListener("click", () => toast(found === notes.length ? "✦ All notes found. Legend." : `✦ ${notes.length - found} hidden notes left. Keep shining.`));
 
   /* ------------------------------------------------------------------ */
-  /* 5. Loader + intro                                                   */
+  /* Loader + intro                                                      */
   /* ------------------------------------------------------------------ */
   function intro() {
-    const stickers = $$(".sticker");
-    if (G && !reduce) {
-      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
-      tl.to(".hl .ch", { y: 0, opacity: 1, duration: 1.0, stagger: 0.025 })
-        .to(".hl__block", { clipPath: "inset(0 0% 0 0)", duration: 0.8, ease: "power3.inOut" }, 0.45)
-        .from(".masthead", { y: -14, opacity: 0, duration: 0.6 }, 0.1)
-        .from(".receipt", { y: -220, rotate: 16, opacity: 0, duration: 1.1, ease: "back.out(1.4)" }, 0.5)
-        .fromTo(stickers, { opacity: 0, "--s": 0 }, { opacity: 1, "--s": 1, duration: 0.7, ease: "back.out(2.2)", stagger: 0.12 }, 0.9)
-        .from(".hero__foot > *", { y: 24, opacity: 0, duration: 0.7, stagger: 0.08 }, 0.7);
-    } else {
-      $$(".hl .ch").forEach((c) => { c.style.transform = "none"; c.style.opacity = 1; });
-      $$(".hl__block").forEach((b) => (b.style.clipPath = "none"));
-      stickers.forEach((s) => (s.style.opacity = 1));
-    }
-    setTimeout(() => $$("#receiptLines [data-count]").forEach((el, i) => setTimeout(() => countUp(el, 1300), i * 140)), reduce ? 0 : 900);
+    if (G && !reduce) gsap.to(".hero__title .line > span", { y: 0, duration: 1.2, ease: "power4.out", stagger: 0.1 });
+    else $$(".hero__title .line > span").forEach((s) => (s.style.transform = "none"));
+    $$(".hero .fade").forEach((el, i) => setTimeout(() => el.classList.add("is-in"), (reduce ? 0 : 300) + i * 110));
   }
   const loader = $("#loader");
   if (loader && !reduce) {
-    const pct = $("#loaderPct"), bar = $("#loaderBar"), t0 = performance.now(), dur = 1250;
-    const tick = (now) => {
-      const p = Math.min(1, (now - t0) / dur), n = Math.round((1 - Math.pow(1 - p, 3)) * 100);
-      pct.textContent = String(n).padStart(3, "0"); bar.style.width = n + "%";
+    const lit = $(".loader__lit"), pct = $("#loaderPct"), t0 = performance.now(), dur = 1500;
+    (function tick(now) {
+      const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 2);
+      lit.style.setProperty("--lx", (-15 + e * 130) + "%"); pct.textContent = String(Math.round(e * 100)).padStart(2, "0");
       if (p < 1) requestAnimationFrame(tick);
-      else { loader.classList.add("is-done"); setTimeout(intro, 250); setTimeout(() => loader.remove(), 1100); }
-    };
-    requestAnimationFrame(tick);
+      else { lit.style.webkitMaskImage = lit.style.maskImage = "none"; setTimeout(() => { loader.classList.add("is-done"); intro(); }, 260); setTimeout(() => loader.remove(), 1200); }
+    })(t0);
   } else { loader && loader.remove(); intro(); }
 
   /* ------------------------------------------------------------------ */
-  /* 6. Nav, progress, active section, menu                              */
+  /* Nav, progress, menu                                                 */
   /* ------------------------------------------------------------------ */
   const nav = $("#nav"), prog = $("#progress");
   let lastY = 0;
@@ -261,7 +260,7 @@
   const spy = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.classList.toggle("is-active", a.getAttribute("href") === "#" + e.target.id)); }), { rootMargin: "-45% 0px -50% 0px" });
   $$("main section[id]").forEach((s) => spy.observe(s));
 
-  const burger = $("#burger"), menu = $("#mobileMenu");
+  const burger = $("#burger"), menu = $("#menu");
   const lock = (on) => { document.body.classList.toggle("locked", on); lenis && (on ? lenis.stop() : lenis.start()); };
   function closeMenu() { if (!menu.classList.contains("is-open")) return; menu.classList.remove("is-open"); burger.classList.remove("is-open"); burger.setAttribute("aria-expanded", "false"); menu.setAttribute("aria-hidden", "true"); lock(false); }
   burger.addEventListener("click", () => {
@@ -270,247 +269,204 @@
   });
 
   /* ------------------------------------------------------------------ */
-  /* 7. Melbourne clock                                                  */
+  /* Cursor + magnetic buttons                                           */
   /* ------------------------------------------------------------------ */
-  const tf = new Intl.DateTimeFormat("en-AU", { timeZone: "Australia/Melbourne", hour: "2-digit", minute: "2-digit", hour12: false });
-  const df = new Intl.DateTimeFormat("en-AU", { timeZone: "Australia/Melbourne", day: "2-digit", month: "2-digit", year: "numeric" });
-  const clock = () => {
-    const now = new Date(), t = tf.format(now);
-    $("#clockText").textContent = "MEL " + t;
-    $("#mastClock").textContent = "Melbourne " + t;
-    $("#receiptMeta").textContent = `#${(S.receipt && S.receipt.id) || "MS"} · ${df.format(now)} ${t}`;
-  };
-  clock(); setInterval(clock, 15000);
-
-  /* ------------------------------------------------------------------ */
-  /* 8. Cursor + magnetic buttons                                        */
-  /* ------------------------------------------------------------------ */
-  const cur = $("#cursor"), curLabel = $("#cursorLabel");
   if (fine && !reduce) {
-    let x = innerWidth / 2, y = innerHeight / 2, cx = x, cy = y;
+    const cur = $("#cursor"), lab = $("#cursorLabel"), dot = $(".cursor__dot"), ring = $(".cursor__ring");
+    let x = -100, y = -100, rx = -100, ry = -100;
     addEventListener("mousemove", (e) => { x = e.clientX; y = e.clientY; }, { passive: true });
-    (function loop() { cx += (x - cx) * 0.28; cy += (y - cy) * 0.28; cur.style.transform = `translate(${cx}px, ${cy}px)`; requestAnimationFrame(loop); })();
-    const RED = '[data-theme="red"], .btn--red, .hl__block, .sticker--pill, .post__tag, .quote:nth-child(3n+1), .case__tags span:last-child';
+    (function loop() { rx += (x - rx) * 0.2; ry += (y - ry) * 0.2; dot.style.transform = `translate(${x}px,${y}px)`; ring.style.translate = `${rx}px ${ry}px`; lab.style.transform = `translate(${rx}px,${ry}px)`; requestAnimationFrame(loop); })();
     document.addEventListener("mouseover", (e) => {
       const t = e.target;
-      const hov = t.closest("a, button, [data-drag], [data-cursor], input, select, textarea, label, .svc, .tool, .ledger li");
-      cur.classList.toggle("is-hover", !!hov);
-      const lab = t.closest("[data-cursor]")?.dataset.cursor || (t.closest("[data-drag]") ? "Drag me" : t.closest("#heroBurst") ? "Pop!" : "");
-      curLabel.textContent = lab; cur.classList.toggle("has-label", !!lab);
-      cur.classList.toggle("on-red", !!t.closest(RED));
+      cur.classList.toggle("is-hover", !!t.closest("a, button, input, select, textarea, label, [data-cursor]"));
+      const l = t.closest("[data-cursor]")?.dataset.cursor || ""; lab.textContent = l; cur.classList.toggle("has-label", !!l);
     });
-    document.addEventListener("mouseleave", () => (cur.style.opacity = 0));
-    document.addEventListener("mouseenter", () => (cur.style.opacity = 1));
-
     $$("[data-magnetic]").forEach((el) => {
-      el.addEventListener("mousemove", (e) => { const r = el.getBoundingClientRect(); el.style.translate = `${(e.clientX - r.left - r.width / 2) * 0.25}px ${(e.clientY - r.top - r.height / 2) * 0.35}px`; });
-      el.addEventListener("mouseleave", () => { el.style.transition = "translate .5s cubic-bezier(.34,1.56,.64,1), transform .25s, box-shadow .25s, background .2s, color .2s"; el.style.translate = "0 0"; setTimeout(() => (el.style.transition = ""), 500); });
+      el.addEventListener("mousemove", (e) => {
+        const r = el.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
+        el.style.translate = `${(mx - r.width / 2) * 0.2}px ${(my - r.height / 2) * 0.3}px`;
+        el.style.setProperty("--bx", mx + "px"); el.style.setProperty("--by", my + "px");
+      });
+      el.addEventListener("mouseleave", () => { el.style.transition = "translate .5s cubic-bezier(.34,1.56,.64,1), background .25s, box-shadow .3s"; el.style.translate = "0 0"; setTimeout(() => (el.style.transition = ""), 500); });
     });
   }
 
   /* ------------------------------------------------------------------ */
-  /* 9. Draggable stickers                                               */
+  /* Reveal + counters                                                   */
   /* ------------------------------------------------------------------ */
-  $$("[data-drag]").forEach((el) => {
-    let sx = 0, sy = 0, ox = 0, oy = 0, id = null;
-    el.addEventListener("pointerdown", (e) => {
-      id = e.pointerId; el.setPointerCapture(id); el.classList.add("is-dragging");
-      sx = e.clientX; sy = e.clientY; ox = parseFloat(el.style.getPropertyValue("--dx")) || 0; oy = parseFloat(el.style.getPropertyValue("--dy")) || 0;
-    });
-    el.addEventListener("pointermove", (e) => {
-      if (e.pointerId !== id) return;
-      el.style.setProperty("--dx", ox + e.clientX - sx + "px"); el.style.setProperty("--dy", oy + e.clientY - sy + "px");
-    });
-    const end = (e) => {
-      if (e.pointerId !== id) return; id = null; el.classList.remove("is-dragging");
-      el.style.setProperty("--r", (Math.random() * 20 - 10).toFixed(1) + "deg");
-    };
-    el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
+  const rio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-in"); rio.unobserve(e.target); } }), { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+  $$(".reveal").forEach((el) => rio.observe(el));
+  const cio = new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return; cio.unobserve(e.target);
+    const el = e.target, to = +el.dataset.count, dec = +el.dataset.decimals || 0, pre = el.dataset.prefix || "", t0 = performance.now();
+    const f = (v) => pre + v.toFixed(dec);
+    if (reduce) { el.textContent = f(to); return; }
+    (function step(now) { const p = Math.min(1, (now - t0) / 1500), k = 1 - Math.pow(1 - p, 4); el.textContent = f(to * k); if (p < 1) requestAnimationFrame(step); })(t0);
+  }), { threshold: 0.5 });
+  $$("[data-count]").forEach((el) => cio.observe(el));
+
+  /* ------------------------------------------------------------------ */
+  /* Statement: light up word by word                                    */
+  /* ------------------------------------------------------------------ */
+  const st = $("#statement");
+  [...st.childNodes].forEach((n) => {
+    if (n.nodeType === 3) { const frag = document.createDocumentFragment(); n.textContent.split(/(\s+)/).forEach((w) => { if (!w) return; if (/^\s+$/.test(w)) frag.append(w); else { const s = document.createElement("span"); s.className = "w"; s.textContent = w; frag.append(s); } }); n.replaceWith(frag); }
+    else if (n.nodeType === 1) n.classList.add("w");
   });
+  const words = $$(".w", st);
+  if (G && !reduce) ScrollTrigger.create({ trigger: st, start: "top 80%", end: "bottom 45%", scrub: true, onUpdate: (s) => { const on = Math.round(s.progress * words.length); words.forEach((w, i) => w.classList.toggle("on", i < on)); } });
+  else words.forEach((w) => w.classList.add("on"));
 
   /* ------------------------------------------------------------------ */
-  /* 10. Starburst pop                                                   */
+  /* Case files: stacking depth                                          */
   /* ------------------------------------------------------------------ */
-  function pop(x, y, n = 16) {
-    if (reduce || !G) return;
-    for (let i = 0; i < n; i++) {
-      const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      s.setAttribute("class", "burst-bit"); s.innerHTML = '<use href="#star"/>';
-      if (i % 3 === 0) s.style.color = "#0B0B0B";
-      document.body.appendChild(s);
-      const a = (i / n) * Math.PI * 2 + Math.random() * 0.4, d = 120 + Math.random() * 180, sc = 0.5 + Math.random() * 1.2;
-      gsap.set(s, { x: x - 14, y: y - 14, scale: 0 });
-      gsap.to(s, { x: x - 14 + Math.cos(a) * d, y: y - 14 + Math.sin(a) * d + 60, scale: sc, rotate: Math.random() * 540 - 270, duration: 1 + Math.random() * 0.5, ease: "power3.out" });
-      gsap.to(s, { opacity: 0, duration: 0.4, delay: 0.8 + Math.random() * 0.4, onComplete: () => s.remove() });
-    }
-  }
-  $("#heroBurst").addEventListener("click", (e) => {
-    const r = e.currentTarget.getBoundingClientRect(); pop(r.left + r.width / 2, r.top + r.height / 2, 22);
-    if (G) gsap.fromTo(e.currentTarget, { scale: 1.5 }, { scale: 1, duration: 0.8, ease: "elastic.out(1, .35)" });
-  });
-  $$(".contact__star, .numbers__star").forEach((s) => s.addEventListener("click", (e) => pop(e.clientX, e.clientY, 14)));
-
-  /* ------------------------------------------------------------------ */
-  /* 11. Reveal                                                          */
-  /* ------------------------------------------------------------------ */
-  const rio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-in"); rio.unobserve(e.target); } }), { threshold: 0.12, rootMargin: "0px 0px -5% 0px" });
-  $$(".reveal, .h2").forEach((el) => rio.observe(el));
-
-  /* ------------------------------------------------------------------ */
-  /* 12. Scroll-driven sections                                          */
-  /* ------------------------------------------------------------------ */
-  const words = $$("#manifesto .w"), hiws = $$("#manifesto .hiw");
-  const steps = $$("#loopList li"), nodes = $$(".node"), nodesWrap = $("#ringNodes");
-  let curStep = -1;
-  function setStep(i) {
-    if (i === curStep || !S.process) return; curStep = i;
-    const n = S.process.length;
-    steps.forEach((li, k) => li.classList.toggle("is-on", k === i));
-    nodes.forEach((nd, k) => { nd.classList.toggle("is-on", k === i); nd.classList.toggle("is-done", k < i); nd.querySelector("span").style.transform = `rotate(${i * 360 / n}deg)`; });
-    nodesWrap.style.transform = `rotate(${-i * 360 / n}deg)`;
-    $("#ringN").textContent = String(i + 1).padStart(2, "0");
-    $("#ringT").textContent = S.process[i].title;
-    if (G && !reduce) gsap.fromTo(".ring__center", { scale: 0.9 }, { scale: 1, duration: 0.6, ease: "back.out(3)" });
-  }
-
   if (G && !reduce) {
-    ScrollTrigger.create({ trigger: "#manifesto", start: "top 82%", end: "bottom 45%", scrub: true,
-      onUpdate: (st) => { const on = Math.round(st.progress * words.length); words.forEach((w, k) => w.classList.toggle("on", k < on)); hiws.forEach((h) => h.classList.toggle("on", h.lastElementChild.classList.contains("on"))); } });
-
     const mm = gsap.matchMedia();
-    mm.add("(min-width: 761px)", () => {
-      const track = $("#workTrack"), pin = $("#workPin"), cards = $$(".case[data-case]");
-      const dist = () => Math.max(0, track.scrollWidth - innerWidth);
-      const tw = gsap.to(track, { x: () => -dist(), ease: "none",
-        scrollTrigger: { trigger: pin, start: "top 70px", end: () => "+=" + dist(), pin: true, scrub: 0.7, invalidateOnRefresh: true, anticipatePin: 1,
-          onUpdate: (st) => { const i = Math.min(cards.length - 1, Math.floor(st.progress * cards.length)); $("#workIdx").textContent = String(i + 1).padStart(2, "0"); $("#workBar").style.width = Math.max(8, st.progress * 100) + "%"; } } });
-      return () => tw.scrollTrigger && tw.scrollTrigger.kill();
-    });
     mm.add("(min-width: 1025px)", () => {
-      setStep(0);
-      const st = ScrollTrigger.create({ trigger: "#loopPin", start: "top top", end: "+=220%", pin: true, scrub: true,
-        onUpdate: (s) => { $("#ringProg").style.strokeDashoffset = (1 - s.progress).toFixed(4); setStep(Math.min(S.process.length - 1, Math.floor(s.progress * S.process.length * 0.999))); } });
-      return () => { st.kill(); };
+      const files = $$(".file");
+      files.slice(0, -1).forEach((f, i) => {
+        gsap.to(f, { scale: 0.95, filter: "brightness(.7)", ease: "none", scrollTrigger: { trigger: files[i + 1], start: "top 70%", end: "top 130px", scrub: true } });
+      });
     });
     addEventListener("load", () => ScrollTrigger.refresh());
-  } else {
-    words.forEach((w) => w.classList.add("on")); hiws.forEach((h) => h.classList.add("on"));
-    setStep(0); $("#ringProg").style.strokeDashoffset = 0;
   }
 
   /* ------------------------------------------------------------------ */
-  /* 13. Growth calculator                                               */
+  /* Services accordion                                                  */
   /* ------------------------------------------------------------------ */
-  (function calc() {
+  $$(".svc__item").forEach((it) => {
+    const b = $(".svc__head", it);
+    b.addEventListener("click", () => { const open = !it.classList.contains("is-open"); it.classList.toggle("is-open", open); b.setAttribute("aria-expanded", open); });
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Growth lab                                                          */
+  /* ------------------------------------------------------------------ */
+  (function lab() {
     const c = Object.assign({ visitors: 20000, conversion: 1.5, value: 120, lift: 30 }, S.calculator);
     const I = { v: $("#iVisitors"), c: $("#iConversion"), a: $("#iValue"), l: $("#iLift") };
     I.v.value = c.visitors; I.c.value = c.conversion; I.a.value = c.value; I.l.value = c.lift;
-    const shown = { year: 0, now: 0, nw: 0, month: 0, conv: 0 };
-    let anim = null;
-    function fill(inp) { inp.style.setProperty("--p", ((inp.value - inp.min) / (inp.max - inp.min) * 100) + "%"); }
+    const chart = $("#labChart"); chart.innerHTML = Array.from({ length: 12 }, (_, i) => `<i class="${i < 4 ? "base" : ""}"></i>`).join("");
+    const bars = $$("i", chart), shown = { y: 0, now: 0, nw: 0, cv: 0 }; let raf;
     function update() {
-      Object.values(I).forEach(fill);
+      Object.values(I).forEach((inp) => inp.style.setProperty("--p", ((inp.value - inp.min) / (inp.max - inp.min) * 100) + "%"));
       const v = +I.v.value, cr = +I.c.value / 100, a = +I.a.value, l = +I.l.value / 100;
-      $("#oVisitors").textContent = v.toLocaleString("en-AU");
-      $("#oConversion").textContent = (+I.c.value).toFixed(1) + "%";
-      $("#oValue").textContent = money(a);
-      $("#oLift").textContent = "+" + I.l.value + "%";
-      const now = v * cr * a, nw = v * cr * (1 + l) * a;
-      const target = { year: (nw - now) * 12, now, nw, month: nw - now, conv: v * cr * l };
-      $("#bNow").style.width = (now / nw * 100).toFixed(1) + "%"; $("#bNew").style.width = "100%";
-      cancelAnimationFrame(anim);
-      const from = { ...shown }, t0 = performance.now();
-      const step = (t) => {
+      $("#oVisitors").textContent = v.toLocaleString("en-AU"); $("#oConversion").textContent = (+I.c.value).toFixed(1) + "%";
+      $("#oValue").textContent = money(a); $("#oLift").textContent = "+" + I.l.value + "%";
+      const now = v * cr * a, nw = now * (1 + l), tgt = { y: (nw - now) * 12, now, nw, cv: v * cr * l };
+      bars.forEach((b, i) => { const ramp = i < 4 ? 0 : Math.min(1, (i - 3) / 5); b.style.height = ((now + (nw - now) * ramp) / nw * 100).toFixed(1) + "%"; });
+      cancelAnimationFrame(raf); const from = { ...shown }, t0 = performance.now();
+      (function step(t) {
         const p = Math.min(1, (t - t0) / 500), e = 1 - Math.pow(1 - p, 3);
-        for (const k in target) shown[k] = from[k] + (target[k] - from[k]) * e;
-        $("#rYear").textContent = money(shown.year); $("#rNow").textContent = money(shown.now) + "/mo"; $("#rNew").textContent = money(shown.nw) + "/mo";
-        $("#rMonth").textContent = money(shown.month); $("#rConv").textContent = Math.round(shown.conv).toLocaleString("en-AU");
-        if (p < 1) anim = requestAnimationFrame(step);
-      };
-      anim = requestAnimationFrame(step);
+        for (const k in tgt) shown[k] = from[k] + (tgt[k] - from[k]) * e;
+        $("#rYear").textContent = money(shown.y); $("#rNow").textContent = money(shown.now) + "/mo"; $("#rNew").textContent = money(shown.nw) + "/mo"; $("#rConv").textContent = Math.round(shown.cv).toLocaleString("en-AU");
+        if (p < 1) raf = requestAnimationFrame(step);
+      })(t0);
     }
-    Object.values(I).forEach((inp) => inp.addEventListener("input", update));
-    update();
+    Object.values(I).forEach((inp) => inp.addEventListener("input", update)); update();
   })();
 
   /* ------------------------------------------------------------------ */
-  /* 14. FAQ                                                             */
+  /* Terminal process                                                    */
   /* ------------------------------------------------------------------ */
-  $$(".faq__item").forEach((item, i) => {
-    const q = $(".faq__q", item);
+  (function terminal() {
+    const body = $("#termBody"), steps = $$(".step"), P = S.process || [];
+    const setStep = (i) => steps.forEach((s, k) => s.classList.toggle("is-on", k === i));
+    const full = () => P.map((p) => `<span class="p">$</span> ${esc(p.cmd)}\n<span class="ok">✓</span> ${esc(p.out)}\n`).join("\n");
+    if (reduce) { body.innerHTML = full() + '\n<span class="p">$</span> <span class="c"></span>'; setStep(P.length - 1); return; }
+    let started = false;
+    new IntersectionObserver(([e], o) => { if (e.isIntersecting && !started) { started = true; o.disconnect(); run(); } }, { threshold: 0.4 }).observe($("#term"));
+    async function run() {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      let html = "";
+      for (let i = 0; i < P.length; i++) {
+        setStep(i);
+        html += '<span class="p">$</span> ';
+        for (const ch of P[i].cmd) { html += esc(ch); body.innerHTML = html + '<span class="c"></span>'; await wait(22); }
+        await wait(260); html += `\n<span class="ok">✓</span> ${esc(P[i].out)}\n\n`; body.innerHTML = html + '<span class="c"></span>'; await wait(700);
+      }
+      body.innerHTML = html + '<span class="p">$</span> <span class="c"></span>';
+    }
+  })();
+
+  /* ------------------------------------------------------------------ */
+  /* Testimonials                                                        */
+  /* ------------------------------------------------------------------ */
+  (function quotes() {
+    const slides = $$(".qs"), dots = $$("#qDots button"); if (!slides.length) return;
+    let i = 0, timer;
+    const show = (n) => { i = (n + slides.length) % slides.length; slides.forEach((s, k) => s.classList.toggle("is-on", k === i)); dots.forEach((d, k) => d.classList.toggle("is-on", k === i)); };
+    const auto = () => { clearInterval(timer); if (!reduce) timer = setInterval(() => show(i + 1), 6500); };
+    $("#qPrev").addEventListener("click", () => { show(i - 1); auto(); });
+    $("#qNext").addEventListener("click", () => { show(i + 1); auto(); });
+    dots.forEach((d, k) => d.addEventListener("click", () => { show(k); auto(); }));
+    const stage = $(".quote-stage"); stage.addEventListener("mouseenter", () => clearInterval(timer)); stage.addEventListener("mouseleave", auto);
+    auto();
+  })();
+
+  /* ------------------------------------------------------------------ */
+  /* FAQ                                                                 */
+  /* ------------------------------------------------------------------ */
+  $$(".faq__item").forEach((it) => {
+    const q = $(".faq__q", it);
     q.addEventListener("click", () => {
-      const open = !item.classList.contains("is-open");
+      const open = !it.classList.contains("is-open");
       $$(".faq__item").forEach((o) => { o.classList.remove("is-open"); $(".faq__q", o).setAttribute("aria-expanded", "false"); });
-      if (open) { item.classList.add("is-open"); q.setAttribute("aria-expanded", "true"); }
+      if (open) { it.classList.add("is-open"); q.setAttribute("aria-expanded", "true"); }
     });
-    if (i === 0) { item.classList.add("is-open"); q.setAttribute("aria-expanded", "true"); }
   });
 
   /* ------------------------------------------------------------------ */
-  /* 15. Case study modal                                                */
+  /* Case file modal                                                     */
   /* ------------------------------------------------------------------ */
-  const modal = $("#modal"), body = $("#modalBody");
-  let lastFocus = null;
+  const modal = $("#modal"), mbody = $("#modalBody"); let lastFocus = null;
   function openCase(i) {
-    const c = S.caseStudies[i]; if (!c) return;
-    lastFocus = document.activeElement;
-    body.innerHTML = `
-      <div class="modal__media">${cover(c.series, "m" + i)}${c.image ? `<img src="${esc(c.image)}" alt="" onerror="this.remove()">` : ""}</div>
+    const c = S.caseStudies[i]; if (!c) return; lastFocus = document.activeElement;
+    mbody.innerHTML = `<div class="modal__chart">${lineChart(c.series, { W: 800, H: 200 })}</div>
       <div class="modal__content">
-        <div><span class="case__client">${esc(c.client)} · ${esc(c.industry)} · ${esc(c.year)}</span><h2 id="modalTitle">${esc(c.title)}</h2></div>
-        <div class="case__kpis">${c.kpis.map((k) => `<div><strong class="${k.value < 0 ? "neg" : ""}">${fmt(k.value, { decimals: k.decimals || 0, suffix: k.suffix || "" })}</strong><small>${esc(k.label)}</small></div>`).join("")}</div>
+        <div><span class="mono muted">Case file ${esc(c.file)} · ${esc(c.client)} · ${esc(c.industry)} · ${esc(c.year)} · ${esc(c.duration)}</span><h2 id="modalTitle">${esc(c.title)}</h2></div>
+        <div class="modal__kpis">${c.kpis.map((k) => `<div><strong>${esc(k.v)}</strong><small>${esc(k.l)}</small></div>`).join("")}</div>
         <div class="modal__sec"><h4>The problem</h4><p>${esc(c.problem)}</p></div>
         <div class="modal__sec"><h4>The approach</h4><p>${esc(c.approach)}</p></div>
         <div class="modal__sec"><h4>The result</h4><p>${esc(c.result)}</p></div>
-        <div class="modal__tags">${(c.services || []).map((s) => `<span>${esc(s)}</span>`).join("")}</div>
-        <div><a href="#contact" class="btn btn--red">Get results like these →</a></div>
+        <div><a href="#contact" class="btn btn--violet">Get results like these →</a></div>
       </div>`;
-    modal.classList.add("is-open"); modal.setAttribute("aria-hidden", "false"); lock(true);
-    $(".modal__close").focus();
+    modal.classList.add("is-open"); modal.setAttribute("aria-hidden", "false"); lock(true); $(".modal__close").focus();
+    declassify($$(".file")[i]);
   }
   function closeModal() { if (!modal.classList.contains("is-open")) return; modal.classList.remove("is-open"); modal.setAttribute("aria-hidden", "true"); lock(false); lastFocus && lastFocus.focus(); }
   document.addEventListener("click", (e) => {
-    const card = e.target.closest(".case[data-case]");
-    if (card && !e.target.closest("a")) return openCase(+card.dataset.case);
+    const f = e.target.closest(".file[data-case]"); if (f) return openCase(+f.dataset.case);
     if (e.target.closest("[data-close]")) closeModal();
   });
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") { closeModal(); closeMenu(); }
-    if ((e.key === "Enter" || e.key === " ") && e.target.matches(".case[data-case]")) { e.preventDefault(); openCase(+e.target.dataset.case); }
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches(".file[data-case]")) { e.preventDefault(); openCase(+e.target.dataset.case); }
   });
 
   /* ------------------------------------------------------------------ */
-  /* 16. Email copy + toast                                              */
+  /* Contact                                                             */
   /* ------------------------------------------------------------------ */
-  const toast = (msg) => { const t = $("#toast"); t.textContent = msg; t.classList.add("is-on"); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("is-on"), 2200); };
   $("#emailBtn").addEventListener("click", async (e) => {
-    try { await navigator.clipboard.writeText(S.email); toast("✱ Email copied. Talk soon."); }
-    catch { location.href = "mailto:" + S.email; }
-    const r = e.currentTarget.getBoundingClientRect(); pop(r.right - 30, r.top + r.height / 2, 12);
+    try { await navigator.clipboard.writeText(S.email); toast("✦ Email copied. Talk soon."); } catch { location.href = "mailto:" + S.email; }
+    const r = e.currentTarget.getBoundingClientRect(); burst(r.right - 30, r.top + r.height / 2, 12);
   });
-
-  /* ------------------------------------------------------------------ */
-  /* 17. Contact form                                                    */
-  /* ------------------------------------------------------------------ */
   const form = $("#contactForm");
   form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    let ok = true;
+    e.preventDefault(); let ok = true;
     $$("[required]", form).forEach((f) => { const bad = !f.value.trim() || (f.type === "email" && !/^\S+@\S+\.\S+$/.test(f.value)); f.closest(".field").classList.toggle("is-error", bad); if (bad) ok = false; });
     if (!ok) { toast("A couple of fields need a look."); return; }
-    const d = new FormData(form), note = $("#formNote");
-    const needs = d.getAll("needs").join(", ") || "—";
+    const d = new FormData(form), note = $("#formNote"), needs = d.getAll("needs").join(", ") || "—";
     if (/YOUR_FORM_ID/.test(form.action)) {
-      const msg = `Name: ${d.get("name")}\nEmail: ${d.get("email")}\nNeeds: ${needs}\nBudget: ${d.get("budget") || "Not sure"}\n\n${d.get("message")}`;
+      const msg = `Name: ${d.get("name")}\nEmail: ${d.get("email")}\nCompany: ${d.get("company") || "—"}\nNeeds: ${needs}\nBudget: ${d.get("budget") || "Not sure"}\n\n${d.get("message")}`;
       location.href = `mailto:${S.email}?subject=${encodeURIComponent("Project enquiry from " + d.get("name"))}&body=${encodeURIComponent(msg)}`;
       form.classList.add("is-sent"); note.textContent = "Opening your email app…"; return;
     }
     note.textContent = "Sending…";
     try {
-      const res = await fetch(form.action, { method: "POST", body: d, headers: { Accept: "application/json" } });
-      if (!res.ok) throw new Error();
+      const res = await fetch(form.action, { method: "POST", body: d, headers: { Accept: "application/json" } }); if (!res.ok) throw new Error();
       form.classList.add("is-sent"); note.textContent = "Got it. Reply within one business day."; form.reset();
-      const b = $(".form .btn").getBoundingClientRect(); pop(b.left + b.width / 2, b.top, 20);
+      const b = $(".form .btn").getBoundingClientRect(); burst(b.left + b.width / 2, b.top, 20);
     } catch { note.textContent = "Something broke. Email me at " + S.email; }
   });
 })();

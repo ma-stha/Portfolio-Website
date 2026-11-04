@@ -1,15 +1,11 @@
 # Images
 
-Drop your photos here using these exact file names. Anything missing shows a styled placeholder, so nothing breaks.
+| File | Used for | Notes |
+|------|----------|-------|
+| portrait.jpg | Hero photo, revealed in full colour under the UV torch | 1000 px wide |
+| portrait-duo.jpg | Violet duotone version shown by default | Regenerate if you change portrait.jpg |
+| avatar.png | Nav, contact card | 256 × 256, from the violet-ring avatar |
+| og-image.png | Link previews | 1200 × 630 |
+| paper-dark.png, grain.png | Site textures | Keep these |
 
-| File | Used for | Suggested size |
-|------|----------|----------------|
-| portrait.jpg | About section polaroid (shown in black and white, colour on hover) | 1200 × 1500 px |
-| case-ecom.jpg | Case study 1 cover | 1600 × 800 px |
-| case-local.jpg | Case study 2 cover | 1600 × 800 px |
-| case-saas.jpg | Case study 3 cover | 1600 × 800 px |
-| case-email.jpg | Case study 4 cover | 1600 × 800 px |
-| og-image.png | Link preview (already generated) | 1200 × 630 px |
-| paper.png, grain.png | Site textures. Keep these. | — |
-
-Case study covers are optional. Without them each card shows a generated chart.
+To swap the hero photo, replace both portrait files with the same crop. Keep a portrait (roughly 3:4) ratio.
