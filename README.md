@@ -75,6 +75,14 @@ Either add a new entry to `POSTS` in `tools/build_pages.py` and rebuild (the car
 - Add `assets/Manjil-Shrestha-CV.pdf` or remove the "Download CV" links.
 - Optional: set `calendlyUrl` in `js/content.js` to swap the booking widget for a Calendly embed.
 
+## Design options
+
+| Version | Where | Status |
+|---------|-------|--------|
+| Red "Signal on Paper" | repo root | **Main site** |
+| Purple "Trajectory" | `/trajectory/` | Full alternative design, same content, noindex. See `trajectory/README.md` |
+| Purple "Ultraviolet" | git commit `cf6a8f6` | Archived |
+
 ## The purple "Ultraviolet" version
 
 The dark purple version with the UV torch is saved in git history at commit `cf6a8f6`. To look at it:

@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /trajectory/
 
 Sitemap: https://manjilshrestha.online/sitemap.xml

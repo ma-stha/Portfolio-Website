@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why most GA4 setups lie to you (and five fixes) | Manjil Shrestha</title>
+  <meta name="description" content="Your dashboard says sales are up. Your bank account disagrees. Here are the five GA4 settings behind most of the gap, and how to fix each in under an hour.">
+  <meta name="author" content="Manjil Shrestha">
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#F5F3FC">
+  <link rel="canonical" href="https://manjilshrestha.online/blog/ga4-setups-lie-to-you/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Why most GA4 setups lie to you (and five fixes) | Manjil Shrestha">
+  <meta property="og:description" content="Your dashboard says sales are up. Your bank account disagrees. Here are the five GA4 settings behind most of the gap, and how to fix each in under an hour.">
+  <meta property="og:image" content="../../assets/img/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/trajectory.css">
+</head>
+<body class="no-js">
+  <script>document.body.classList.replace('no-js','js');</script>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="logo" viewBox="0 0 1463 317"><path fill="currentColor" fill-rule="evenodd" d="M0,0H317V317H238V73H198V317H119V73H80V317H16V73H0Z M342,0H580V317H501V229H421V317H342Z M421,73V157H501V73Z M599,0H838V317H758V73H679V317H615V73H599Z M1018,0H1097V317H859V193H939V245H1018Z M1122,0H1202V317H1122Z M1226,0H1306V245H1463V317H1226Z"/><path fill="var(--star, #6A2CFF)" d="M926.0,3.0 L931.9,75.9 L979.5,20.4 L941.4,82.8 L1012.5,65.9 L945.0,94.0 L1012.5,122.1 L941.4,105.2 L979.5,167.6 L931.9,112.1 L926.0,185.0 L920.1,112.1 L872.5,167.6 L910.6,105.2 L839.5,122.1 L907.0,94.0 L839.5,65.9 L910.6,82.8 L872.5,20.4 L920.1,75.9Z"/></symbol>
+<symbol id="star" viewBox="0 0 100 100"><path fill="currentColor" d="M50.0,0.0 L53.2,40.0 L79.4,9.5 L58.5,43.8 L97.6,34.5 L60.5,50.0 L97.6,65.5 L58.5,56.2 L79.4,90.5 L53.2,60.0 L50.0,100.0 L46.8,60.0 L20.6,90.5 L41.5,56.2 L2.4,65.5 L39.5,50.0 L2.4,34.5 L41.5,43.8 L20.6,9.5 L46.8,40.0Z"/></symbol>
+</svg>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="cursor" id="cursor" aria-hidden="true"><i></i><span id="cursorLabel"></span></div>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+  <nav class="spine" id="spine" aria-label="Sections on this page"></nav>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="../../" aria-label="Manjil Shrestha, home"><svg viewBox="0 0 1463 317"><use href="#logo"/></svg></a>
+    <nav class="nav__links" aria-label="Primary"><a href="../../#work">Work</a><a href="../../services/">Services</a><a href="../../#lab">Lab</a><a href="../../blog/" aria-current=page class=is-active>Blog</a><a href="../../contact/">Contact</a></nav>
+    <div class="nav__right">
+      <span class="nav__status"><i class="pulse"></i><span data-availability>Available</span></span>
+      <a class="btn btn--primary btn--sm" href="../../book/" data-magnetic>Book a call <svg class="i-arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a class="nav__me" href="../../contact/" aria-label="Contact"><img src="../../assets/img/avatar.png" alt="" width="36" height="36"></a>
+      <button class="nav__burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
+    </div>
+  </header>
+  <div class="menu" id="menu" aria-hidden="true">
+    <nav class="menu__links"><a href="../../#work"><small>01</small>Work<span><svg class="i-arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><a href="../../services/"><small>02</small>Services<span><svg class="i-arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><a href="../../#lab"><small>03</small>Lab<span><svg class="i-arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><a href="../../blog/"><small>04</small>Blog<span><svg class="i-arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><a href="../../contact/"><small>05</small>Contact<span><svg class="i-arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><a href="../../book/"><small>06</small>Book a free call<span><svg class="i-arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></nav>
+    <div class="menu__foot" data-socials></div>
+  </div>
+
+  <main id="main">
+    <article>
+      <header class="phero phero--post" id="top" data-spine="Top">
+        <div class="container">
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="../../">Home</a><span aria-hidden="true">/</span><a href="../../blog/">Blog</a><span aria-hidden="true">/</span><span aria-current="page">Analytics</span></nav>
+          <div class="post-head">
+            <p class="fade"><span class="tagchip tagchip--lime">Analytics</span></p>
+            <h1 class="post-title fade">Why most GA4 setups lie to you (and five fixes)</h1>
+            <p class="dek fade">Your dashboard says sales are up. Your bank account disagrees. Here are the five GA4 settings behind most of the gap, and how to fix each in under an hour.</p>
+            <div class="post-meta fade">
+              <div class="author"><img src="../../assets/img/avatar.png" alt="" width="44" height="44"><div><b>Manjil Shrestha</b><span class="mono">Digital marketer · Melbourne</span></div></div>
+              <span class="mono">14 October 2026 · 7 min read</span>
+              <div class="share"><a data-share="linkedin" target="_blank" rel="noopener" aria-label="Share on LinkedIn">in</a><a data-share="x" target="_blank" rel="noopener" aria-label="Share on X">X</a><button data-copy-link aria-label="Copy link">⧉</button></div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div class="container">
+        <figure class="post-cover"><svg viewBox="0 0 1600 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="cvh1" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6A2CFF" stop-opacity=".45"/><stop offset="1" stop-color="#6A2CFF" stop-opacity="0"/></linearGradient><radialGradient id="cvh1r" cx=".8" cy=".1" r=".9"><stop offset="0" stop-color="#C4B3FF"/><stop offset="1" stop-color="#EEE9FF"/></radialGradient></defs><rect width="1600" height="600" fill="url(#cvh1r)"/><line x1="0" x2="0" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="40" x2="40" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="80" x2="80" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="120" x2="120" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="160" x2="160" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="200" x2="200" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="240" x2="240" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="280" x2="280" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="320" x2="320" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="360" x2="360" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="400" x2="400" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="440" x2="440" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="480" x2="480" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="520" x2="520" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="560" x2="560" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="600" x2="600" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="640" x2="640" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="680" x2="680" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="720" x2="720" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="760" x2="760" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="800" x2="800" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="840" x2="840" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="880" x2="880" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="920" x2="920" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="960" x2="960" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1000" x2="1000" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1040" x2="1040" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1080" x2="1080" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1120" x2="1120" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1160" x2="1160" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1200" x2="1200" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1240" x2="1240" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1280" x2="1280" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1320" x2="1320" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1360" x2="1360" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1400" x2="1400" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1440" x2="1440" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1480" x2="1480" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1520" x2="1520" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="1560" x2="1560" y1="0" y2="600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="0" y2="0" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="40" y2="40" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="80" y2="80" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="120" y2="120" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="160" y2="160" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="200" y2="200" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="240" y2="240" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="280" y2="280" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="320" y2="320" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="360" y2="360" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="400" y2="400" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="440" y2="440" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="480" y2="480" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="520" y2="520" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="560" y2="560" x1="0" x2="1600" stroke="#6A2CFF" stroke-opacity=".07"/><circle cx="1215" cy="171" r="30" fill="none" stroke="#6A2CFF" stroke-opacity="0.220"/><circle cx="1215" cy="171" r="64" fill="none" stroke="#6A2CFF" stroke-opacity="0.195"/><circle cx="1215" cy="171" r="98" fill="none" stroke="#6A2CFF" stroke-opacity="0.170"/><circle cx="1215" cy="171" r="132" fill="none" stroke="#6A2CFF" stroke-opacity="0.145"/><circle cx="1215" cy="171" r="166" fill="none" stroke="#6A2CFF" stroke-opacity="0.120"/><circle cx="1215" cy="171" r="200" fill="none" stroke="#6A2CFF" stroke-opacity="0.095"/><circle cx="1215" cy="171" r="234" fill="none" stroke="#6A2CFF" stroke-opacity="0.070"/><path d="M96.0,528.0 C160.0,528.0 160.0,499.5 224.0,499.5 C288.0,499.5 288.0,508.8 352.0,508.8 C416.0,508.8 416.0,461.6 480.0,461.6 C544.0,461.6 544.0,465.6 608.0,465.6 C672.0,465.6 672.0,367.9 736.0,367.9 C800.0,367.9 800.0,387.5 864.0,387.5 C928.0,387.5 928.0,370.4 992.0,370.4 C1056.0,370.4 1056.0,233.6 1120.0,233.6 C1184.0,233.6 1184.0,204.3 1248.0,204.3 C1312.0,204.3 1312.0,180.2 1376.0,180.2 C1440.0,180.2 1440.0,156.0 1504.0,156.0 L1504.0,600 L96.0,600Z" fill="url(#cvh1)"/><path d="M96.0,528.0 C160.0,528.0 160.0,499.5 224.0,499.5 C288.0,499.5 288.0,508.8 352.0,508.8 C416.0,508.8 416.0,461.6 480.0,461.6 C544.0,461.6 544.0,465.6 608.0,465.6 C672.0,465.6 672.0,367.9 736.0,367.9 C800.0,367.9 800.0,387.5 864.0,387.5 C928.0,387.5 928.0,370.4 992.0,370.4 C1056.0,370.4 1056.0,233.6 1120.0,233.6 C1184.0,233.6 1184.0,204.3 1248.0,204.3 C1312.0,204.3 1312.0,180.2 1376.0,180.2 C1440.0,180.2 1440.0,156.0 1504.0,156.0" fill="none" stroke="#6A2CFF" stroke-width="7.3" stroke-linecap="round"/><circle cx="1504.0" cy="156.0" r="23" fill="#D7FF3E" stroke="#170B38" stroke-width="2"/></svg></figure>
+        <div class="post-layout">
+          <aside class="toc card"><p class="mono">On this page</p><ol id="toc"></ol><div class="toc__progress mono"><span id="tocLeft">7 min left</span><div class="meter"><i id="tocBar"></i></div></div></aside>
+          <div>
+            <details class="toc-mobile card"><summary class="mono">On this page</summary><ol id="tocMobile"></ol></details>
+            <div class="prose" data-minutes="7" data-spine="Article">
+<div class="tldr"><h4>TL;DR</h4><ul>
+<li>In the audits I run, most GA4 properties miscount conversions somewhere between "a bit" and "wildly".</li>
+<li>Five settings cause most of it: duplicate purchases, the wrong key events, internal traffic, payment-gateway referrals and short data retention.</li>
+<li>All five are quick to fix. There's a checklist at the end.</li></ul></div>
+
+<p>Every week someone shows me a GA4 report that looks great and a revenue number that doesn't. Nobody lied on purpose. GA4 just does exactly what it's told, and most properties were told the wrong things during a rushed setup two years ago.</p>
+
+<h2 id="the-problem"><span class="hnum">00</span>The quiet problem</h2>
+<p class="has-note">Bad tracking rarely breaks loudly. It drifts. A thank-you page that fires twice, a payment provider that steals the credit for a sale, your own team browsing the site all day. Each one nudges the numbers a little, and every budget decision you make sits on top of them. <span class="annot"><b>Side note</b>true story: one client's "record month" was a thank-you page firing twice.</span></p>
+<div class="stat-row"><div><b>5</b><span>settings cause most of the damage</span></div><div><b>&lt;1 hr</b><span>to fix all of them</span></div><div><b>14 mo</b><span>of history you should be keeping</span></div></div>
+
+<h2 id="duplicate-purchases" data-toc="Fix duplicate purchases"><span class="hnum">01</span>Fix duplicate purchases</h2>
+<p>If a customer reloads the order confirmation page, or comes back to it from an email, many setups send a second <code>purchase</code> event. Your revenue in GA4 creeps above your real revenue, and your ROAS looks better than it is.</p>
+<p>The fix is to always send a unique <code>transaction_id</code> with every purchase. GA4 uses it to recognise repeat purchase events for the same order.</p>
+<pre><code><span class="c">// Push this once, on the order confirmation page</span>
+dataLayer.push({ ecommerce: null });
+dataLayer.push({
+  <span class="k">event</span>: <span class="s">"purchase"</span>,
+  <span class="k">ecommerce</span>: {
+    <span class="k">transaction_id</span>: <span class="s">"ORD-10482"</span>,   <span class="c">// unique per order</span>
+    <span class="k">value</span>: 189.00,
+    <span class="k">currency</span>: <span class="s">"AUD"</span>
+  }
+});</code></pre>
+<div class="callout"><span class="callout__i">✦</span><p><strong>Quick test:</strong> in GA4, compare purchases per week with orders from Shopify or your CRM. If GA4 is consistently higher, duplicates are the first suspect.</p></div>
+<figure class="figure"><div class="figure__box"><svg viewBox="0 0 640 260" role="img" aria-label="Bar chart: purchases in GA4 compared with real orders, before and after the fixes">
+  <text x="20" y="22" font-family="IBM Plex Mono, monospace" font-size="11" fill="#170B38">Weekly purchases · GA4 vs real orders</text>
+  <rect x="456" y="13" width="10" height="10" rx="3" fill="#6A2CFF"/><text x="472" y="22" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6B6390">GA4</text>
+  <rect x="512" y="13" width="10" height="10" rx="3" fill="#C4B3FF"/><text x="528" y="22" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6B6390">Real orders</text>
+  <g stroke="#170B38" stroke-opacity=".08"><line x1="20" x2="620" y1="70" y2="70"/><line x1="20" x2="620" y1="150" y2="150"/></g><line x1="20" x2="620" y1="230" y2="230" stroke="#170B38" stroke-opacity=".25"/>
+  <rect x="34" y="67" width="20" height="163" rx="5" fill="#6A2CFF"/><rect x="56" y="107" width="20" height="123" rx="5" fill="#C4B3FF"/><text x="40" y="250" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6B6390">W1</text><rect x="93" y="58" width="20" height="172" rx="5" fill="#6A2CFF"/><rect x="115" y="102" width="20" height="128" rx="5" fill="#C4B3FF"/><text x="99" y="250" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6B6390">W2</text><rect x="152" y="64" width="20" height="166" rx="5" fill="#6A2CFF"/><rect x="174" y="105" width="20" height="125" rx="5" fill="#C4B3FF"/><text x="158" y="250" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6B6390">W3</text><rect x="211" y="52" width="20" height="178" rx="5" fill="#6A2CFF"/><rect x="233" y="99" width="20" height="131" rx="5" fill="#C4B3FF"/><text x="217" y="250" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6B6390">W4</text><rect x="270" y="55" width="20" height="175" rx="5" fill="#6A2CFF"/><rect x="292" y="101" width="20" height="129" rx="5" fill="#C4B3FF"/><text x="276" y="250" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6B6390">W5</text><rect x="329" y="97" width="20" height="133" rx="5" fill="#6A2CFF"/><rect x="351" y="101" width="20" height="129" rx="5" fill="#C4B3FF"/><text x="335" y="250" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6B6390">W6</text><rect x="388" y="100" width="20" height="130" rx="5" fill="#6A2CFF"/><rect x="410" y="103" width="20" height="127" rx="5" fill="#C4B3FF"/><text x="394" y="250" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6B6390">W7</text><rect x="447" y="94" width="20" height="136" rx="5" fill="#6A2CFF"/><rect x="469" y="97" width="20" height="133" rx="5" fill="#C4B3FF"/><text x="453" y="250" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6B6390">W8</text><rect x="506" y="96" width="20" height="134" rx="5" fill="#6A2CFF"/><rect x="528" y="98" width="20" height="132" rx="5" fill="#C4B3FF"/><text x="512" y="250" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6B6390">W9</text><rect x="565" y="90" width="20" height="140" rx="5" fill="#6A2CFF"/><rect x="587" y="92" width="20" height="138" rx="5" fill="#C4B3FF"/><text x="571" y="250" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6B6390">W10</text>
+  <line x1="330" x2="330" y1="40" y2="236" stroke="#170B38" stroke-dasharray="4 5" stroke-opacity=".5"/>
+  <rect x="338" y="40" width="112" height="22" rx="11" fill="#D7FF3E"/><text x="350" y="55" font-family="IBM Plex Mono, monospace" font-size="10" fill="#170B38">fixes shipped →</text>
+</svg></div><figcaption>Fig. 1 · Illustrative data. After deduplication, GA4 purchases track real orders closely.</figcaption></figure>
+
+<h2 id="key-events" data-toc="Mark the right key events"><span class="hnum">02</span>Mark the right key events</h2>
+<p>In 2024 Google renamed GA4 "conversions" to <strong>key events</strong>. Whatever you call them, they should be the handful of actions that mean money: a purchase, a qualified lead, a booked call. I regularly find properties where page views or scrolls are marked as key events, which makes every channel look like a winner.</p>
+<div class="table-wrap"><table><thead><tr><th>Event</th><th>Key event?</th><th>Why</th></tr></thead><tbody>
+<tr><td><code>purchase</code></td><td>Yes</td><td>Direct revenue</td></tr>
+<tr><td><code>generate_lead</code></td><td>Yes</td><td>A real enquiry, once spam is filtered</td></tr>
+<tr><td><code>book_call</code></td><td>Yes</td><td>Strongest B2B intent signal</td></tr>
+<tr><td><code>scroll</code></td><td>No</td><td>Engagement, not an outcome</td></tr>
+<tr><td><code>page_view</code></td><td>No</td><td>Inflates every report it touches</td></tr>
+</tbody></table></div>
+
+<h2 id="internal-traffic" data-toc="Filter out your own traffic"><span class="hnum">03</span>Filter out your own traffic</h2>
+<p>Your team, your developers and your agency visit the site constantly. In a small business that can be a noticeable share of sessions and test conversions.</p>
+<ol>
+<li>In Admin, open your web data stream and choose <strong>Configure tag settings</strong>, then <strong>Define internal traffic</strong>. Add your office and home IP addresses.</li>
+<li>In Admin, open <strong>Data filters</strong>. The internal traffic filter is created in a <em>Testing</em> state.</li>
+<li>Check it in reports for a few days, then switch it to <strong>Active</strong>.</li>
+</ol>
+<div class="callout callout--warn"><span class="callout__i">!</span><p><strong>Watch out:</strong> filters only apply from the moment they're active. They don't clean historical data, so do this early.</p></div>
+
+<h2 id="referrals" data-toc="Stop gateways stealing credit"><span class="hnum">04</span>Stop payment gateways stealing credit</h2>
+<p class="has-note">When a customer pays through PayPal, Afterpay or a hosted checkout and returns to your site, GA4 can start a new session and credit the sale to that payment domain as a "referral". Your Google Ads campaign did the work and PayPal gets the trophy. <span class="annot"><b>Side note</b>PayPal has never once run your ads. stop thanking it.</span></p>
+<p>Open your web stream's tag settings and use <strong>List unwanted referrals</strong> to add the payment domains you use, for example <code>paypal.com</code>, <code>afterpay.com</code> or <code>checkout.stripe.com</code>.</p>
+<blockquote>You can't optimise what you can't trust. Fix the measurement first, then argue about the strategy.<cite>— Manjil Shrestha</cite></blockquote>
+
+<h2 id="retention" data-toc="Keep 14 months of data"><span class="hnum">05</span>Keep 14 months of data, not 2</h2>
+<p>GA4 standard properties default to keeping event-level data for <strong>2 months</strong>. That limit applies to explorations, the custom reports you use for deeper analysis. Change it to <strong>14 months</strong> under Admin, <strong>Data retention</strong>, so you can compare this season with last year's.</p>
+<p>It takes a minute and it isn't retroactive, so the sooner the better.</p>
+
+<h2 id="checklist" data-toc="The one-hour checklist"><span class="hnum">✓</span>The one-hour checklist</h2>
+<ul class="checklist">
+<li><label><input type="checkbox"><span>Every <code>purchase</code> sends a unique <code>transaction_id</code></span></label></li>
+<li><label><input type="checkbox"><span>GA4 weekly purchases match your store or CRM within a few percent</span></label></li>
+<li><label><input type="checkbox"><span>Only money-related actions are marked as key events</span></label></li>
+<li><label><input type="checkbox"><span>Internal traffic is defined and the filter is Active</span></label></li>
+<li><label><input type="checkbox"><span>Payment domains are listed as unwanted referrals</span></label></li>
+<li><label><input type="checkbox"><span>Event data retention is set to 14 months</span></label></li>
+<li><label><input type="checkbox"><span>Someone owns tracking, and checks it monthly</span></label></li>
+</ul>
+
+<h2 id="next" data-toc="What to do next">What to do next</h2>
+<p>Run the checklist this week. If more than two boxes stay unticked, your reports are probably steering budget in the wrong direction. If you'd like a second pair of eyes, <a href="../../book/">book a free 30-minute audit call</a> and we'll go through your property together.</p>
+</div>
+            <div class="post-end">
+              <div class="author-box card"><img src="../../assets/img/avatar.png" alt="Manjil Shrestha" width="72" height="72"><div><h3>Written by Manjil Shrestha</h3><p class="muted">Data-driven digital marketer in Melbourne, known online as mastha. I help small teams fix their tracking, then grow with SEO, paid media and CRO.</p><p><a class="link" href="../../services/">Services</a> · <a class="link" href="../../book/">Book a free call</a></p></div></div>
+              <nav class="post-nav" aria-label="More articles"><span></span><a class="card" href="../../blog/melbourne-local-seo-playbook/"><span class="mono">Older →</span><b>A suburb-by-suburb playbook for ranking in Melbourne</b></a></nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+    <section class="section section--tight" data-spine="Keep reading">
+      <div class="container">
+        <div class="shead shead--row"><div><p class="eyebrow rv">Keep reading</p><h2 class="h2 rv">More from the <em>dashboard.</em></h2></div><p class="lead rv"><a class="link" href="../../blog/">All articles →</a></p></div>
+        <div class="cards3"><a class="pcard rv" href="../../blog/melbourne-local-seo-playbook/" data-post data-tags="local-seo" data-text="a suburb-by-suburb playbook for ranking in melbourne melbourne customers search by suburb. here is how to build pages, profiles and proof that rank in the suburbs you actually serve, without creating thin doorway pages. local seo" data-cursor="Read">
+          <div class="pcard__cover"><svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="cvpmel2" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6A2CFF" stop-opacity=".45"/><stop offset="1" stop-color="#6A2CFF" stop-opacity="0"/></linearGradient><radialGradient id="cvpmel2r" cx=".8" cy=".1" r=".9"><stop offset="0" stop-color="#C4B3FF"/><stop offset="1" stop-color="#EEE9FF"/></radialGradient></defs><rect width="640" height="400" fill="url(#cvpmel2r)"/><line x1="0" x2="0" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="40" x2="40" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="80" x2="80" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="120" x2="120" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="160" x2="160" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="200" x2="200" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="240" x2="240" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="280" x2="280" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="320" x2="320" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="360" x2="360" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="400" x2="400" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="440" x2="440" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="480" x2="480" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="520" x2="520" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="560" x2="560" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="600" x2="600" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="0" y2="0" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="40" y2="40" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="80" y2="80" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="120" y2="120" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="160" y2="160" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="200" y2="200" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="240" y2="240" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="280" y2="280" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="320" y2="320" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="360" y2="360" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><circle cx="472" cy="106" r="30" fill="none" stroke="#6A2CFF" stroke-opacity="0.220"/><circle cx="472" cy="106" r="64" fill="none" stroke="#6A2CFF" stroke-opacity="0.195"/><circle cx="472" cy="106" r="98" fill="none" stroke="#6A2CFF" stroke-opacity="0.170"/><circle cx="472" cy="106" r="132" fill="none" stroke="#6A2CFF" stroke-opacity="0.145"/><circle cx="472" cy="106" r="166" fill="none" stroke="#6A2CFF" stroke-opacity="0.120"/><circle cx="472" cy="106" r="200" fill="none" stroke="#6A2CFF" stroke-opacity="0.095"/><circle cx="472" cy="106" r="234" fill="none" stroke="#6A2CFF" stroke-opacity="0.070"/><path d="M38.4,352.0 C64.0,352.0 64.0,286.2 89.6,286.2 C115.2,286.2 115.2,305.1 140.8,305.1 C166.4,305.1 166.4,286.1 192.0,286.1 C217.6,286.1 217.6,273.2 243.2,273.2 C268.8,273.2 268.8,210.8 294.4,210.8 C320.0,210.8 320.0,217.3 345.6,217.3 C371.2,217.3 371.2,203.7 396.8,203.7 C422.4,203.7 422.4,187.3 448.0,187.3 C473.6,187.3 473.6,134.9 499.2,134.9 C524.8,134.9 524.8,104.0 550.4,104.0 C576.0,104.0 576.0,114.1 601.6,114.1 L601.6,400 L38.4,400Z" fill="url(#cvpmel2)"/><path d="M38.4,352.0 C64.0,352.0 64.0,286.2 89.6,286.2 C115.2,286.2 115.2,305.1 140.8,305.1 C166.4,305.1 166.4,286.1 192.0,286.1 C217.6,286.1 217.6,273.2 243.2,273.2 C268.8,273.2 268.8,210.8 294.4,210.8 C320.0,210.8 320.0,217.3 345.6,217.3 C371.2,217.3 371.2,203.7 396.8,203.7 C422.4,203.7 422.4,187.3 448.0,187.3 C473.6,187.3 473.6,134.9 499.2,134.9 C524.8,134.9 524.8,104.0 550.4,104.0 C576.0,104.0 576.0,114.1 601.6,114.1" fill="none" stroke="#6A2CFF" stroke-width="2.9" stroke-linecap="round"/><circle cx="601.6" cy="114.1" r="9" fill="#D7FF3E" stroke="#170B38" stroke-width="2"/></svg><span class="tagchip">Local SEO</span></div>
+          <div class="pcard__body"><p class="mono pcard__meta">22 September 2026 · 8 min</p><h3>A suburb-by-suburb playbook for ranking in Melbourne</h3><p>Melbourne customers search by suburb. Here is how to build pages, profiles and proof that rank in the suburbs you…</p><span class="pcard__more">Read article <svg class="i-arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        </a><a class="pcard rv" href="../../blog/marginal-roas-budget-rule/" data-post data-tags="paid-media" data-text="marginal roas: the only budget rule you need average roas tells you how your ads did. marginal roas tells you what your next dollar will do. only one of those should decide your budget. paid media" data-cursor="Read">
+          <div class="pcard__cover"><svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="cvpmar3" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6A2CFF" stop-opacity=".45"/><stop offset="1" stop-color="#6A2CFF" stop-opacity="0"/></linearGradient><radialGradient id="cvpmar3r" cx=".8" cy=".1" r=".9"><stop offset="0" stop-color="#C4B3FF"/><stop offset="1" stop-color="#EEE9FF"/></radialGradient></defs><rect width="640" height="400" fill="url(#cvpmar3r)"/><line x1="0" x2="0" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="40" x2="40" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="80" x2="80" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="120" x2="120" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="160" x2="160" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="200" x2="200" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="240" x2="240" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="280" x2="280" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="320" x2="320" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="360" x2="360" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="400" x2="400" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="440" x2="440" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="480" x2="480" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="520" x2="520" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="560" x2="560" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line x1="600" x2="600" y1="0" y2="400" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="0" y2="0" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="40" y2="40" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="80" y2="80" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="120" y2="120" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="160" y2="160" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="200" y2="200" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="240" y2="240" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="280" y2="280" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="320" y2="320" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><line y1="360" y2="360" x1="0" x2="640" stroke="#6A2CFF" stroke-opacity=".07"/><circle cx="490" cy="114" r="30" fill="none" stroke="#6A2CFF" stroke-opacity="0.220"/><circle cx="490" cy="114" r="64" fill="none" stroke="#6A2CFF" stroke-opacity="0.195"/><circle cx="490" cy="114" r="98" fill="none" stroke="#6A2CFF" stroke-opacity="0.170"/><circle cx="490" cy="114" r="132" fill="none" stroke="#6A2CFF" stroke-opacity="0.145"/><circle cx="490" cy="114" r="166" fill="none" stroke="#6A2CFF" stroke-opacity="0.120"/><circle cx="490" cy="114" r="200" fill="none" stroke="#6A2CFF" stroke-opacity="0.095"/><circle cx="490" cy="114" r="234" fill="none" stroke="#6A2CFF" stroke-opacity="0.070"/><path d="M38.4,352.0 C64.0,352.0 64.0,350.9 89.6,350.9 C115.2,350.9 115.2,329.1 140.8,329.1 C166.4,329.1 166.4,278.5 192.0,278.5 C217.6,278.5 217.6,284.0 243.2,284.0 C268.8,284.0 268.8,263.3 294.4,263.3 C320.0,263.3 320.0,218.7 345.6,218.7 C371.2,218.7 371.2,170.9 396.8,170.9 C422.4,170.9 422.4,154.4 448.0,154.4 C473.6,154.4 473.6,178.9 499.2,178.9 C524.8,178.9 524.8,159.6 550.4,159.6 C576.0,159.6 576.0,104.0 601.6,104.0 L601.6,400 L38.4,400Z" fill="url(#cvpmar3)"/><path d="M38.4,352.0 C64.0,352.0 64.0,350.9 89.6,350.9 C115.2,350.9 115.2,329.1 140.8,329.1 C166.4,329.1 166.4,278.5 192.0,278.5 C217.6,278.5 217.6,284.0 243.2,284.0 C268.8,284.0 268.8,263.3 294.4,263.3 C320.0,263.3 320.0,218.7 345.6,218.7 C371.2,218.7 371.2,170.9 396.8,170.9 C422.4,170.9 422.4,154.4 448.0,154.4 C473.6,154.4 473.6,178.9 499.2,178.9 C524.8,178.9 524.8,159.6 550.4,159.6 C576.0,159.6 576.0,104.0 601.6,104.0" fill="none" stroke="#6A2CFF" stroke-width="2.9" stroke-linecap="round"/><circle cx="601.6" cy="104.0" r="9" fill="#D7FF3E" stroke="#170B38" stroke-width="2"/></svg><span class="tagchip">Paid Media</span></div>
+          <div class="pcard__body"><p class="mono pcard__meta">18 August 2026 · 5 min</p><h3>Marginal ROAS: the only budget rule you need</h3><p>Average ROAS tells you how your ads did. Marginal ROAS tells you what your next dollar will do. Only one of those…</p><span class="pcard__more">Read article <svg class="i-arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        </a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" data-spine="Footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <p class="footer__big">Growth, <em>plotted.</em></p>
+          <p class="footer__sub">Data-driven digital marketing for ambitious Melbourne businesses.</p>
+          <a class="btn btn--lime" href="../../book/" data-magnetic>Book a free consultation <svg class="i-arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+        <div class="footer__cols">
+          <div><h4>Site</h4><a href="../../">Home</a><a href="../../services/">Services</a><a href="../../services/seo/">SEO in Melbourne</a><a href="../../blog/">Blog</a></div>
+          <div><h4>Talk</h4><a href="../../book/">Book a call</a><a href="../../contact/">Contact</a><a href="#" data-copy-email>Copy email</a></div>
+          <div><h4>Elsewhere</h4><span data-socials class="footer__soc"></span></div>
+        </div>
+      </div>
+      <svg class="footer__logo" viewBox="0 0 1463 317" role="img" aria-label="Manjil"><use href="#logo"/></svg>
+      <div class="footer__bar"><span>© <span data-year>2026</span> Manjil Shrestha · Melbourne</span><span class="mono" data-mel-clock>MEL --:--</span><a href="#top">Back to top ↑</a></div>
+    </div>
+  </footer>
+
+  <script src="../../js/vendor/gsap.min.js"></script>
+  <script src="../../js/vendor/ScrollTrigger.min.js"></script>
+  <script src="../../js/vendor/lenis.min.js"></script>
+  <script src="../../js/content.js"></script>
+  <script src="../../js/core.js"></script>
+  <script src="../../js/blog.js"></script>
+</body>
+</html>
