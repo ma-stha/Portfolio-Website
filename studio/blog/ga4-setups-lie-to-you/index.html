@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why most GA4 setups lie to you (and five fixes) | Manjil Shrestha</title>
+  <meta name="description" content="Your dashboard says sales are up. Your bank account disagrees. Here are the five GA4 settings behind most of the gap, and how to fix each in under an hour.">
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#F6F5F1">
+  <link rel="canonical" href="https://manjilshrestha.online/blog/ga4-setups-lie-to-you/">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/studio.css">
+</head>
+<body class="no-js">
+  <script>document.body.classList.replace('no-js','js');</script>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="logo" viewBox="0 0 1463 317"><path fill="currentColor" fill-rule="evenodd" d="M0,0H317V317H238V73H198V317H119V73H80V317H16V73H0Z M342,0H580V317H501V229H421V317H342Z M421,73V157H501V73Z M599,0H838V317H758V73H679V317H615V73H599Z M1018,0H1097V317H859V193H939V245H1018Z M1122,0H1202V317H1122Z M1226,0H1306V245H1463V317H1226Z"/><path fill="var(--star, #F83232)" d="M926.0,3.0 L931.9,75.9 L979.5,20.4 L941.4,82.8 L1012.5,65.9 L945.0,94.0 L1012.5,122.1 L941.4,105.2 L979.5,167.6 L931.9,112.1 L926.0,185.0 L920.1,112.1 L872.5,167.6 L910.6,105.2 L839.5,122.1 L907.0,94.0 L839.5,65.9 L910.6,82.8 L872.5,20.4 L920.1,75.9Z"/></symbol>
+<symbol id="star" viewBox="0 0 100 100"><path fill="currentColor" d="M50.0,0.0 L53.2,40.0 L79.4,9.5 L58.5,43.8 L97.6,34.5 L60.5,50.0 L97.6,65.5 L58.5,56.2 L79.4,90.5 L53.2,60.0 L50.0,100.0 L46.8,60.0 L20.6,90.5 L41.5,56.2 L2.4,65.5 L39.5,50.0 L2.4,34.5 L41.5,43.8 L20.6,9.5 L46.8,40.0Z"/></symbol>
+</svg>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="gridlines" aria-hidden="true"><div class="wrap"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+  <div class="preview" id="preview" aria-hidden="true"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <header class="hd" id="nav">
+    <div class="wrap hd__in">
+      <a class="hd__brand" href="../../" aria-label="Manjil Shrestha, home"><svg viewBox="0 0 1463 317"><use href="#logo"/></svg></a>
+      <p class="hd__role">Digital marketing<br>Melbourne, AU</p>
+      <nav class="hd__nav" aria-label="Primary"><a href="../../#work">Work</a><a href="../../services/">Services</a><a href="../../blog/" aria-current=page>Journal</a><a href="../../contact/">Contact</a></nav>
+      <p class="hd__time"><span data-mel-clock>--:--</span> AEDT<br><span class="avail"><i></i>Available for work</span></p>
+      <a class="hd__cta" href="../../book/">Book a call <span class="arr" aria-hidden="true">→</span></a>
+      <button class="hd__menu" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu">Menu</button>
+    </div>
+  </header>
+  <div class="menu" id="menu" aria-hidden="true">
+    <div class="wrap menu__in"><nav class="menu__links"><a href="../../"><span>01</span>Home</a><a href="../../#work"><span>02</span>Work</a><a href="../../services/"><span>03</span>Services</a><a href="../../blog/"><span>04</span>Journal</a><a href="../../contact/"><span>05</span>Contact</a><a href="../../book/"><span>06</span>Book a call</a></nav><div class="menu__foot"><a href="#" data-copy-email data-email-text>hello@</a><div data-socials class="menu__soc"></div></div></div>
+  </div>
+
+  <main id="main">
+    <article class="art">
+      <header class="art__head" id="top">
+        <div class="wrap">
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="../../">Home</a><span aria-hidden="true">/</span><a href="../../blog/">Journal</a><span aria-hidden="true">/</span><span aria-current="page">Analytics</span></nav>
+          <div class="art__grid">
+            <ul class="ph__meta"><li><span>Topic</span>Analytics</li><li><span>Published</span>14 October 2026</li><li><span>Reading time</span>7 minutes</li><li><span>Author</span>Manjil Shrestha</li></ul>
+            <div><h1 class="art__title"><span class="ln"><span>Why most GA4 setups lie to you (and five fixes)</span></span></h1><p class="art__dek in">Your dashboard says sales are up. Your bank account disagrees. Here are the five GA4 settings behind most of the gap, and how to fix each in under an hour.</p>
+              <div class="share in"><a data-share="linkedin" target="_blank" rel="noopener">LinkedIn <span class="arr" aria-hidden="true">↗</span></a><a data-share="x" target="_blank" rel="noopener">X <span class="arr" aria-hidden="true">↗</span></a><button type="button" data-copy-link>Copy link</button></div></div>
+          </div>
+        </div>
+      </header>
+      <div class="wrap"><figure class="art__cover in"><svg viewBox="0 0 1600 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="1600" height="640" fill="#F83232"/><path d="M0.0,381.2 C61.5,381.2 61.5,347.5 123.1,347.5 C184.6,347.5 184.6,350.8 246.2,350.8 C307.7,350.8 307.7,309.7 369.2,309.7 C430.8,309.7 430.8,279.9 492.3,279.9 C553.8,279.9 553.8,262.1 615.4,262.1 C676.9,262.1 676.9,243.2 738.5,243.2 C800.0,243.2 800.0,277.5 861.5,277.5 C923.1,277.5 923.1,217.6 984.6,217.6 C1046.2,217.6 1046.2,192.3 1107.7,192.3 C1169.2,192.3 1169.2,221.6 1230.8,221.6 C1292.3,221.6 1292.3,133.1 1353.8,133.1 C1415.4,133.1 1415.4,169.4 1476.9,169.4 C1538.5,169.4 1538.5,73.2 1600.0,73.2" fill="none" stroke="#0D0D0D" stroke-width="2.5"/><circle cx="1597" cy="73" r="7" fill="#0D0D0D"/><text x="26" y="40" font-family="Host Grotesk, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="500" fill="#0D0D0D">Analytics</text><text x="1574" y="40" text-anchor="end" font-family="Host Grotesk, Helvetica Neue, Arial, sans-serif" font-size="15" fill="#0D0D0D" opacity=".7">Fig. 01</text><text x="20" y="612" font-family="Host Grotesk, Helvetica Neue, Arial, sans-serif" font-size="210" font-weight="700" letter-spacing="-8" fill="#0D0D0D">GA4</text></svg></figure></div>
+      <div class="wrap art__body">
+        <aside class="toc"><p>Contents</p><ol id="toc"></ol><p class="toc__p"><span id="tocLeft">7 min left</span></p><div class="meter"><i id="tocBar"></i></div></aside>
+        <div class="art__col">
+          <details class="toc-m"><summary>Contents</summary><ol id="tocMobile"></ol></details>
+          <div class="prose" data-minutes="7">
+<div class="tldr"><h4>TL;DR</h4><ul>
+<li>In the audits I run, most GA4 properties miscount conversions somewhere between "a bit" and "wildly".</li>
+<li>Five settings cause most of it: duplicate purchases, the wrong key events, internal traffic, payment-gateway referrals and short data retention.</li>
+<li>All five are quick to fix. There's a checklist at the end.</li></ul></div>
+
+<p>Every week someone shows me a GA4 report that looks great and a revenue number that doesn't. Nobody lied on purpose. GA4 just does exactly what it's told, and most properties were told the wrong things during a rushed setup two years ago.</p>
+
+<h2 id="the-problem"><span class="num">00</span>The quiet problem</h2>
+<p class="has-note">Bad tracking rarely breaks loudly. It drifts. A thank-you page that fires twice, a payment provider that steals the credit for a sale, your own team browsing the site all day. Each one nudges the numbers a little, and every budget decision you make sits on top of them. <span class="side">true story: one client's "record month" was a thank-you page firing twice.</span></p>
+<div class="stat-row"><div><b>5</b><span>settings cause most of the damage</span></div><div><b>&lt;1 hr</b><span>to fix all of them</span></div><div><b>14 mo</b><span>of history you should be keeping</span></div></div>
+
+<h2 id="duplicate-purchases" data-toc="Fix duplicate purchases"><span class="num">01</span>Fix duplicate purchases</h2>
+<p>If a customer reloads the order confirmation page, or comes back to it from an email, many setups send a second <code>purchase</code> event. Your revenue in GA4 creeps above your real revenue, and your ROAS looks better than it is.</p>
+<p>The fix is to always send a unique <code>transaction_id</code> with every purchase. GA4 uses it to recognise repeat purchase events for the same order.</p>
+<pre><code><span class="c">// Push this once, on the order confirmation page</span>
+dataLayer.push({ ecommerce: null });
+dataLayer.push({
+  <span class="k">event</span>: <span class="s">"purchase"</span>,
+  <span class="k">ecommerce</span>: {
+    <span class="k">transaction_id</span>: <span class="s">"ORD-10482"</span>,   <span class="c">// unique per order</span>
+    <span class="k">value</span>: 189.00,
+    <span class="k">currency</span>: <span class="s">"AUD"</span>
+  }
+});</code></pre>
+<div class="callout"><span class="callout__i">✦</span><p><strong>Quick test:</strong> in GA4, compare purchases per week with orders from Shopify or your CRM. If GA4 is consistently higher, duplicates are the first suspect.</p></div>
+<figure class="figure"><div class="figure__box"><svg viewBox="0 0 640 260" role="img" aria-label="Bar chart: purchases in GA4 compared with real orders, before and after the fixes">
+  <text x="20" y="22" font-family="Host Grotesk, sans-serif" font-size="12" font-weight="600" fill="#0D0D0D">Weekly purchases, GA4 vs real orders</text>
+  <rect x="452" y="12" width="10" height="10" fill="#F83232"/><text x="468" y="21" font-family="Host Grotesk, sans-serif" font-size="11">GA4</text><rect x="512" y="12" width="10" height="10" fill="#0D0D0D"/><text x="528" y="21" font-family="Host Grotesk, sans-serif" font-size="11">Real orders</text>
+  <line x1="20" x2="620" y1="230" y2="230" stroke="#0D0D0D"/><rect x="34" y="67" width="20" height="163" fill="#F83232"/><rect x="56" y="107" width="20" height="123" fill="#0D0D0D"/><text x="42" y="250" font-family="Host Grotesk, sans-serif" font-size="11" fill="#6E6B66">W1</text><rect x="93" y="58" width="20" height="172" fill="#F83232"/><rect x="115" y="102" width="20" height="128" fill="#0D0D0D"/><text x="101" y="250" font-family="Host Grotesk, sans-serif" font-size="11" fill="#6E6B66">W2</text><rect x="152" y="64" width="20" height="166" fill="#F83232"/><rect x="174" y="105" width="20" height="125" fill="#0D0D0D"/><text x="160" y="250" font-family="Host Grotesk, sans-serif" font-size="11" fill="#6E6B66">W3</text><rect x="211" y="52" width="20" height="178" fill="#F83232"/><rect x="233" y="99" width="20" height="131" fill="#0D0D0D"/><text x="219" y="250" font-family="Host Grotesk, sans-serif" font-size="11" fill="#6E6B66">W4</text><rect x="270" y="55" width="20" height="175" fill="#F83232"/><rect x="292" y="101" width="20" height="129" fill="#0D0D0D"/><text x="278" y="250" font-family="Host Grotesk, sans-serif" font-size="11" fill="#6E6B66">W5</text><rect x="329" y="97" width="20" height="133" fill="#F83232"/><rect x="351" y="101" width="20" height="129" fill="#0D0D0D"/><text x="337" y="250" font-family="Host Grotesk, sans-serif" font-size="11" fill="#6E6B66">W6</text><rect x="388" y="100" width="20" height="130" fill="#F83232"/><rect x="410" y="103" width="20" height="127" fill="#0D0D0D"/><text x="396" y="250" font-family="Host Grotesk, sans-serif" font-size="11" fill="#6E6B66">W7</text><rect x="447" y="94" width="20" height="136" fill="#F83232"/><rect x="469" y="97" width="20" height="133" fill="#0D0D0D"/><text x="455" y="250" font-family="Host Grotesk, sans-serif" font-size="11" fill="#6E6B66">W8</text><rect x="506" y="96" width="20" height="134" fill="#F83232"/><rect x="528" y="98" width="20" height="132" fill="#0D0D0D"/><text x="514" y="250" font-family="Host Grotesk, sans-serif" font-size="11" fill="#6E6B66">W9</text><rect x="565" y="90" width="20" height="140" fill="#F83232"/><rect x="587" y="92" width="20" height="138" fill="#0D0D0D"/><text x="573" y="250" font-family="Host Grotesk, sans-serif" font-size="11" fill="#6E6B66">W10</text>
+  <line x1="330" x2="330" y1="42" y2="236" stroke="#0D0D0D" stroke-dasharray="2 4"/><text x="338" y="54" font-family="Host Grotesk, sans-serif" font-size="11" fill="#0D0D0D">Fixes shipped</text>
+</svg></div><figcaption>Fig. 1 · Illustrative data. After deduplication, GA4 purchases track real orders closely.</figcaption></figure>
+
+<h2 id="key-events" data-toc="Mark the right key events"><span class="num">02</span>Mark the right key events</h2>
+<p>In 2024 Google renamed GA4 "conversions" to <strong>key events</strong>. Whatever you call them, they should be the handful of actions that mean money: a purchase, a qualified lead, a booked call. I regularly find properties where page views or scrolls are marked as key events, which makes every channel look like a winner.</p>
+<div class="table-wrap"><table><thead><tr><th>Event</th><th>Key event?</th><th>Why</th></tr></thead><tbody>
+<tr><td><code>purchase</code></td><td>Yes</td><td>Direct revenue</td></tr>
+<tr><td><code>generate_lead</code></td><td>Yes</td><td>A real enquiry, once spam is filtered</td></tr>
+<tr><td><code>book_call</code></td><td>Yes</td><td>Strongest B2B intent signal</td></tr>
+<tr><td><code>scroll</code></td><td>No</td><td>Engagement, not an outcome</td></tr>
+<tr><td><code>page_view</code></td><td>No</td><td>Inflates every report it touches</td></tr>
+</tbody></table></div>
+
+<h2 id="internal-traffic" data-toc="Filter out your own traffic"><span class="num">03</span>Filter out your own traffic</h2>
+<p>Your team, your developers and your agency visit the site constantly. In a small business that can be a noticeable share of sessions and test conversions.</p>
+<ol>
+<li>In Admin, open your web data stream and choose <strong>Configure tag settings</strong>, then <strong>Define internal traffic</strong>. Add your office and home IP addresses.</li>
+<li>In Admin, open <strong>Data filters</strong>. The internal traffic filter is created in a <em>Testing</em> state.</li>
+<li>Check it in reports for a few days, then switch it to <strong>Active</strong>.</li>
+</ol>
+<div class="callout callout--warn"><span class="callout__i">!</span><p><strong>Watch out:</strong> filters only apply from the moment they're active. They don't clean historical data, so do this early.</p></div>
+
+<h2 id="referrals" data-toc="Stop gateways stealing credit"><span class="num">04</span>Stop payment gateways stealing credit</h2>
+<p class="has-note">When a customer pays through PayPal, Afterpay or a hosted checkout and returns to your site, GA4 can start a new session and credit the sale to that payment domain as a "referral". Your Google Ads campaign did the work and PayPal gets the trophy. <span class="side">PayPal has never once run your ads. stop thanking it.</span></p>
+<p>Open your web stream's tag settings and use <strong>List unwanted referrals</strong> to add the payment domains you use, for example <code>paypal.com</code>, <code>afterpay.com</code> or <code>checkout.stripe.com</code>.</p>
+<blockquote>You can't optimise what you can't trust. Fix the measurement first, then argue about the strategy.<cite>— Manjil Shrestha</cite></blockquote>
+
+<h2 id="retention" data-toc="Keep 14 months of data"><span class="num">05</span>Keep 14 months of data, not 2</h2>
+<p>GA4 standard properties default to keeping event-level data for <strong>2 months</strong>. That limit applies to explorations, the custom reports you use for deeper analysis. Change it to <strong>14 months</strong> under Admin, <strong>Data retention</strong>, so you can compare this season with last year's.</p>
+<p>It takes a minute and it isn't retroactive, so the sooner the better.</p>
+
+<h2 id="checklist" data-toc="The one-hour checklist"><span class="num">✓</span>The one-hour checklist</h2>
+<ul class="checklist">
+<li><label><input type="checkbox"><span>Every <code>purchase</code> sends a unique <code>transaction_id</code></span></label></li>
+<li><label><input type="checkbox"><span>GA4 weekly purchases match your store or CRM within a few percent</span></label></li>
+<li><label><input type="checkbox"><span>Only money-related actions are marked as key events</span></label></li>
+<li><label><input type="checkbox"><span>Internal traffic is defined and the filter is Active</span></label></li>
+<li><label><input type="checkbox"><span>Payment domains are listed as unwanted referrals</span></label></li>
+<li><label><input type="checkbox"><span>Event data retention is set to 14 months</span></label></li>
+<li><label><input type="checkbox"><span>Someone owns tracking, and checks it monthly</span></label></li>
+</ul>
+
+<h2 id="next" data-toc="What to do next">What to do next</h2>
+<p>Run the checklist this week. If more than two boxes stay unticked, your reports are probably steering budget in the wrong direction. If you'd like a second pair of eyes, <a href="../../book/">book a free 30-minute audit call</a> and we'll go through your property together.</p>
+</div>
+          <footer class="art__end">
+            <div class="byline"><img src="../../assets/img/avatar.png" alt="" width="64" height="64"><p><strong>Manjil Shrestha</strong> is an independent digital marketer in Melbourne. He fixes tracking first, then grows businesses with SEO, paid media and CRO. <a class="tlink" href="../../book/">Book a free call</a></p></div>
+            <nav class="pn" aria-label="More articles"><span></span><a href="../../blog/melbourne-local-seo-playbook/"><span>Older</span>A suburb-by-suburb playbook for ranking in Melbourne</a></nav>
+          </footer>
+        </div>
+      </div>
+    </article>
+    <section class="sec">
+      <div class="wrap"><header class="sh"><p class="sh__no">(01)</p><p class="sh__label">Keep reading</p><h2 class="sh__title rv">More from the journal.</h2><div class=sh__aside><a class="tlink" href="../../blog/">All articles</a></div></header><ol class="journal"><li class="jr" data-post data-tags="local-seo" data-text="a suburb-by-suburb playbook for ranking in melbourne melbourne customers search by suburb. here is how to build pages, profiles and proof that rank in the suburbs you actually serve, without creating thin doorway pages. local seo">
+            <a href="../../blog/melbourne-local-seo-playbook/" data-preview>
+              <span class="jr__date">22 September 2026</span><span class="jr__title">A suburb-by-suburb playbook for ranking in Melbourne</span><span class="jr__tag">Local SEO</span><span class="jr__min">8 min <span class="arr" aria-hidden="true">→</span></span>
+              <template><svg viewBox="0 0 600 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="600" height="400" fill="#F83232"/><path d="M0.0,230.0 C23.1,230.0 23.1,228.8 46.2,228.8 C69.2,228.8 69.2,175.7 92.3,175.7 C115.4,175.7 115.4,200.2 138.5,200.2 C161.5,200.2 161.5,180.0 184.6,180.0 C207.7,180.0 207.7,173.9 230.8,173.9 C253.8,173.9 253.8,114.2 276.9,114.2 C300.0,114.2 300.0,135.2 323.1,135.2 C346.2,135.2 346.2,110.6 369.2,110.6 C392.3,110.6 392.3,101.4 415.4,101.4 C438.5,101.4 438.5,67.4 461.5,67.4 C484.6,67.4 484.6,54.0 507.7,54.0 C530.8,54.0 530.8,70.7 553.8,70.7 C576.9,70.7 576.9,55.1 600.0,55.1" fill="none" stroke="#0D0D0D" stroke-width="2.5"/><circle cx="597" cy="55" r="7" fill="#0D0D0D"/><text x="26" y="40" font-family="Host Grotesk, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="500" fill="#0D0D0D">Local SEO</text><text x="574" y="40" text-anchor="end" font-family="Host Grotesk, Helvetica Neue, Arial, sans-serif" font-size="15" fill="#0D0D0D" opacity=".7">Fig. 02</text><text x="20" y="372" font-family="Host Grotesk, Helvetica Neue, Arial, sans-serif" font-size="210" font-weight="700" letter-spacing="-8" fill="#0D0D0D">SEO</text></svg></template>
+            </a></li><li class="jr" data-post data-tags="paid-media" data-text="marginal roas: the only budget rule you need average roas tells you how your ads did. marginal roas tells you what your next dollar will do. only one of those should decide your budget. paid media">
+            <a href="../../blog/marginal-roas-budget-rule/" data-preview>
+              <span class="jr__date">18 August 2026</span><span class="jr__title">Marginal ROAS: the only budget rule you need</span><span class="jr__tag">Paid Media</span><span class="jr__min">5 min <span class="arr" aria-hidden="true">→</span></span>
+              <template><svg viewBox="0 0 600 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="600" height="400" fill="#0D0D0D"/><path d="M0.0,224.3 C23.1,224.3 23.1,230.0 46.2,230.0 C69.2,230.0 69.2,224.9 92.3,224.9 C115.4,224.9 115.4,177.7 138.5,177.7 C161.5,177.7 161.5,186.1 184.6,186.1 C207.7,186.1 207.7,164.8 230.8,164.8 C253.8,164.8 253.8,164.8 276.9,164.8 C300.0,164.8 300.0,146.5 323.1,146.5 C346.2,146.5 346.2,111.3 369.2,111.3 C392.3,111.3 392.3,120.2 415.4,120.2 C438.5,120.2 438.5,103.0 461.5,103.0 C484.6,103.0 484.6,54.0 507.7,54.0 C530.8,54.0 530.8,58.7 553.8,58.7 C576.9,58.7 576.9,54.2 600.0,54.2" fill="none" stroke="#F83232" stroke-width="2.5"/><circle cx="597" cy="54" r="7" fill="#F83232"/><text x="26" y="40" font-family="Host Grotesk, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="500" fill="#F6F5F1">Paid Media</text><text x="574" y="40" text-anchor="end" font-family="Host Grotesk, Helvetica Neue, Arial, sans-serif" font-size="15" fill="#F6F5F1" opacity=".7">Fig. 03</text><text x="20" y="372" font-family="Host Grotesk, Helvetica Neue, Arial, sans-serif" font-size="210" font-weight="700" letter-spacing="-8" fill="#F6F5F1">ROAS</text></svg></template>
+            </a></li></ol></div>
+    </section>
+  </main>
+
+  <footer class="ft">
+    <div class="wrap">
+      <div class="ft__grid">
+        <div class="ft__col ft__col--lead"><p class="ft__big">Manjil Shrestha is an independent digital marketer in Melbourne. SEO, paid media, analytics and CRO, judged on revenue.</p></div>
+        <div class="ft__col"><h4>Site</h4><a href="../../">Home</a><a href="../../services/">Services</a><a href="../../services/seo/">SEO in Melbourne</a><a href="../../blog/">Journal</a></div>
+        <div class="ft__col"><h4>Contact</h4><a href="#" data-copy-email data-email-text>hello@</a><a href="../../book/">Book a call</a><a href="../../contact/">Contact page</a></div>
+        <div class="ft__col"><h4>Elsewhere</h4><div data-socials class="ft__soc"></div></div>
+      </div>
+      <p class="ft__name" data-fit>Manjil Shrestha</p>
+      <div class="ft__bar"><span>© <span data-year>2026</span></span><span>Set in Host Grotesk &amp; Newsreader</span><button type="button" class="ft__grid-toggle" id="gridToggle">Show grid (G)</button><a href="#top">Back to top ↑</a></div>
+    </div>
+  </footer>
+
+  <script src="../../js/vendor/gsap.min.js"></script>
+  <script src="../../js/vendor/ScrollTrigger.min.js"></script>
+  <script src="../../js/vendor/lenis.min.js"></script>
+  <script src="../../js/content.js"></script>
+  <script src="../../js/core.js"></script>
+  <script src="../../js/blog.js"></script>
+</body>
+</html>
