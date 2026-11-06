@@ -3,5 +3,6 @@ Allow: /
 Disallow: /trajectory/
 Disallow: /studio/
 Disallow: /loud/
+Disallow: /brand/
 
 Sitemap: https://manjilshrestha.online/sitemap.xml

@@ -80,6 +80,7 @@ Either add a new entry to `POSTS` in `tools/build_pages.py` and rebuild (the car
 | Version | Where | Status |
 |---------|-------|--------|
 | Red "Signal on Paper" | repo root | **Main site** |
+| Creative branding "Living Mark" | `/brand/` | Full alternative design positioned as a branding expert in Australia, with its own copy. Rules in `brand/DESIGN-BLUEPRINT.md` |
 | Bold red and black "LOUD" | `/loud/` | Full alternative design, same content, noindex. Name-as-chart hero, kinetic type. Rules in `loud/DESIGN-BLUEPRINT.md` |
 | Red editorial "Studio" | `/studio/` | Full alternative design, same content, noindex. See `studio/README.md` |
 | Purple "Trajectory" | `/trajectory/` | Full alternative design, same content, noindex. See `trajectory/README.md` |
