@@ -1232,3 +1232,4 @@ body { font: 400 17px/1.5 var(--sans); background: var(--bg); }
   .nb__l { font-size: 20vw; }
 }
 .ways [data-copy-email] { font-family: var(--sans); font-weight: 600; text-transform: none; font-size: clamp(1rem, 1.25vw, 1.2rem); letter-spacing: -.01em; }
+.kpis--row dd { font-size: clamp(3rem, 6vw, 6.4rem); line-height: .86; }

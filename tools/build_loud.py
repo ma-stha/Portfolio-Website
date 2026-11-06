@@ -310,6 +310,74 @@ def home():
     person = json.dumps({"@context": "https://schema.org", "@type": "Person", "name": "Manjil Shrestha", "alternateName": "mastha", "jobTitle": "Digital Marketing Expert", "address": {"@type": "PostalAddress", "addressLocality": "Melbourne", "addressCountry": "AU"}, "url": SITE}, ensure_ascii=False)
     write('index.html', layout(P, '', 'Digital Marketing Expert in Melbourne | Manjil Shrestha', 'Manjil Shrestha (mastha) is a bold, data-driven digital marketing expert in Melbourne. SEO, paid media, analytics and CRO, judged on revenue.', 'home', body, ['home.js'], [person, B.faq_ld(fq)]))
 
+# ================================================================== PAGE TEMPLATE
+# Copy this function to make a new page. It follows the standard page
+# architecture from loud/DESIGN-BLUEPRINT.md, section 6:
+#   red hero -> light -> red -> light -> dark -> light -> light (FAQ) -> dark CTA -> dark footer
+# Delete the blocks you don't need, but keep the order of colours.
+def page_template():
+    P = '../'                                   # '../' for /x/, '../../' for /x/y/
+    path = '_template/'                         # URL path, with trailing slash
+    fq = [("What is this page?", "A copy-ready template that shows every LOUD block in the standard order."),
+          ("How do I make a new page?", "Copy page_template() in tools/build_loud.py, rename it, change P, path, copy and the write() call, then rebuild.")]
+    aside = '<div class="clockbox"><p class="lab__k">Hero aside (optional)</p><p class="clock">+212%</p><p>One proof number. Never a paragraph.</p></div>'
+    body = phero(P, [("Home", ""), ("Template", path)],                                   # BLOCK 1: red hero (always first)
+                 ["<span>Label</span>Value", "<span>Label</span>Value", "<span>Label</span>Value"],
+                 "Page title in five words.",                                             # 2 to 6 words, ends with a full stop
+                 "One or two sentences that say who this is for and what changes for them. Plain words, no hype.",
+                 f'<a class="btn btn--red" href="{P}book/">Primary action {ARR}</a><a class="tlink" href="#faq">Secondary link</a>', aside) + f'''
+
+    <!-- BLOCK 2: light section, card grid (.incl) -->
+    <section class="sec" data-theme="light">
+      <div class="wrap">
+        {sec_head(1, "Section label", "A headline that makes one claim.", '<p>Optional aside: one short sentence of context.</p>')}
+        <ol class="incl">{"".join(f'<li class="rv"><span>{i + 1:02d}</span><h3>Card title</h3><p>One or two lines. Say what it does and why it matters.</p></li>' for i in range(6))}</ol>
+      </div>
+    </section>
+
+    <!-- BLOCK 3: red section, numbered steps (.steps) -->
+    <section class="sec sec--stone">
+      <div class="wrap">
+        {sec_head(2, "How it works", "Five steps, no mystery.")}
+        <ol class="steps">{"".join(f'<li class="step rv"><span class="step__n">{i + 1:02d}</span><h3>{t}</h3><p>Short line about this step.</p></li>' for i, t in enumerate(["Diagnose", "Plan", "Build", "Measure", "Scale"]))}</ol>
+      </div>
+    </section>
+
+    <!-- BLOCK 4: light section, timeline (.road) -->
+    <section class="sec" data-theme="light">
+      <div class="wrap">
+        {sec_head(3, "Timeline", "What happens, and when.")}
+        <ol class="road">{"".join(f'<li class="rv"><span class="rd__when">{w}</span><h3>{t}</h3><p>What gets done in this stage.</p></li>' for w, t in [("Week 1", "Audit"), ("Month 1", "Fix"), ("Month 2", "Grow"), ("Month 3+", "Compound")])}</ol>
+      </div>
+    </section>
+
+    <!-- BLOCK 5: dark section, proof numbers (.kpis) -->
+    <section class="sec sec--ink">
+      <div class="wrap">
+        {sec_head(4, "Proof", "Numbers, not adjectives.")}
+        <dl class="kpis kpis--row">{"".join(f'<div class="rv"><dt>{l}</dt><dd>{v}</dd></div>' for l, v in [("Organic leads", "+212%"), ("ROAS", "3.6x"), ("Cost per lead", "-33%"), ("Programme", "12 mo")])}</dl>
+      </div>
+    </section>
+
+    <!-- BLOCK 6: light section, pricing (.plans) -->
+    <section class="sec" data-theme="light" id="pricing">
+      <div class="wrap">
+        {sec_head(5, "Pricing", "Clear prices, no lock-in.")}
+        {B.plans_html(P, B.PLANS)}
+      </div>
+    </section>
+
+    <!-- BLOCK 7: light section, FAQ (always near the end) -->
+    <section class="sec" data-theme="light" id="faq">
+      <div class="wrap faq">
+        {sec_head(6, "FAQ", "Straight answers.")}
+        {B.faq(fq)}
+      </div>
+    </section>
+
+{cta(P, "Ready to move a number?")}'''                                                    # BLOCK 8: dark CTA (always last)
+    write(path + 'index.html', layout(P, path, 'Page template | Manjil Shrestha', 'Copy-ready LOUD page template.', '', body, ['pages.js'], [B.faq_ld(fq)]))
+
 # ================================================================== assets + run
 def copy_assets():
     for rel in ['js/content.js', 'js/book.js', 'js/blog.js', 'js/pages.js', 'js/vendor/gsap.min.js', 'js/vendor/ScrollTrigger.min.js', 'js/vendor/lenis.min.js', 'js/vendor/LICENSE-lenis.txt', 'assets/img/portrait.jpg', 'assets/img/avatar.png']:
@@ -323,3 +391,4 @@ if __name__ == '__main__':
     for i, p in enumerate(B.POSTS):
         B.article(p, i)
     B.article(B.TEMPLATE, 0, template=True)
+    page_template()

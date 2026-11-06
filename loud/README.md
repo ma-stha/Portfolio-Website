@@ -2,6 +2,8 @@
 
 A complete design for the site built to feel loud, confident and impossible to mistake for a template.
 
+**Building or editing a page? Read [`DESIGN-BLUEPRINT.md`](DESIGN-BLUEPRINT.md) first.** It holds the rules, tokens, page architecture, component library and the recipe for new pages. The live page template is [`_template/`](_template/index.html).
+
 - **Idea:** the numbers are the heroes, and so is the name. The hero spells MANJIL as a rising bar chart. Bars near the cursor grow, a live trend line runs across their tops, and a tag shows the "growth". On phones a slow wave runs through the bars instead.
 - **System:** full-bleed blocks of logo red `#F83232`, ink `#0A0A0A` and paper `#F2EFE9`. Inside red blocks the accent flips to black, so text on red is always black. 2px rules, no shadows, no gradients, no rounded cards.
 - **Type:** Big Shoulders Display (900, uppercase) for headlines and numbers; Instrument Sans for reading; Martian Mono for labels; Newsreader for article body.
