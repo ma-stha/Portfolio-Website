@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /trajectory/
 Disallow: /studio/
+Disallow: /loud/
 
 Sitemap: https://manjilshrestha.online/sitemap.xml

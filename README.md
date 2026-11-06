@@ -80,6 +80,7 @@ Either add a new entry to `POSTS` in `tools/build_pages.py` and rebuild (the car
 | Version | Where | Status |
 |---------|-------|--------|
 | Red "Signal on Paper" | repo root | **Main site** |
+| Bold red and black "LOUD" | `/loud/` | Full alternative design, same content, noindex. Name-as-chart hero, kinetic type. See `loud/README.md` |
 | Red editorial "Studio" | `/studio/` | Full alternative design, same content, noindex. See `studio/README.md` |
 | Purple "Trajectory" | `/trajectory/` | Full alternative design, same content, noindex. See `trajectory/README.md` |
 | Purple "Ultraviolet" | git commit `cf6a8f6` | Archived |
