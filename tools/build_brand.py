@@ -1,27 +1,60 @@
 """Builds the "Living Mark" design (creative branding, red-led) into /brand/.
 
-Run:  python3 tools/build_brand.py
+Run:  python3 tools/build_brand.py        (Python 3.8+, no other dependencies)
 
 Positioning: Manjil Shrestha, branding expert in Australia (brand + marketing).
-All copy for this design lives in this file (BRAND content below), so it can
-diverge from the data-led main site. Shared helpers (FAQ, crumbs, dates,
-logo symbol) come from tools/build_studio.py.
+This file is the single source of truth for the design: settings, icons,
+copy, case studies, articles and every page. It is fully standalone.
 Rules for extending it: brand/DESIGN-BLUEPRINT.md
 """
 import os, re, sys, json, shutil, math, html
+from datetime import datetime
 
 TOOLS = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, TOOLS)
-import build_studio as B   # noqa: E402  (helpers only)
-
-ROOT = B.ROOT
+ROOT = os.path.dirname(TOOLS)
 OUT = os.path.join(ROOT, 'brand')
 E = html.escape
-SITE = B.SITE
+
+# ====================================================================== SETTINGS
+# Edit these first. They feed every page and brand/js/content.js.
+SITE = 'https://manjilshrestha.online/'          # canonical domain (with trailing slash)
+CONTACT = {
+    "name": "Manjil Shrestha",
+    "email": "hello@manjilshrestha.online",
+    "availability": "Booking new brands for early 2027",
+    "location": "Melbourne, Australia",
+    "calendlyUrl": "",                            # paste a Calendly link to replace the built-in booking calendar
+    "socials": [
+        {"label": "LinkedIn", "href": "https://www.linkedin.com/in/manjilshrestha"},
+        {"label": "Instagram", "href": "https://www.instagram.com/mastha"},
+        {"label": "X", "href": "https://x.com/mastha"},
+        {"label": "GitHub", "href": "https://github.com/ma-stha"},
+    ],
+}
+SYMBOLS = open(os.path.join(TOOLS, 'symbols.txt')).read()    # the MANJIL logo (#logo) and its star (#star)
+
 RED, INK, PAPER, BLUSH = '#F83232', '#161211', '#F4EEE6', '#F9D8D1'
 ARR = '<span class="arr" aria-hidden="true">→</span>'
 NE = '<span class="arr" aria-hidden="true">↗</span>'
 DEMO = '<span class="demo">demo</span>'
+
+def fmt_date(iso):
+    d = datetime.strptime(iso, '%Y-%m-%d')
+    return f'{d.day} {d.strftime("%B %Y")}'
+
+def faq(items, uid='q'):
+    return '<div class="faq__list">' + ''.join(
+        f'<div class="faq__item"><button class="faq__q" aria-expanded="false" aria-controls="{uid}{i}"><span class="faq__n">{i + 1:02d}</span><span>{E(q)}</span><i aria-hidden="true"></i></button>'
+        f'<div class="faq__a" id="{uid}{i}" role="region"><div><p>{E(a)}</p></div></div></div>' for i, (q, a) in enumerate(items)) + '</div>'
+
+def faq_ld(items):
+    return json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in items]}, ensure_ascii=False)
+
+def crumbs(P, trail):
+    out = []
+    for i, (n, p) in enumerate(trail):
+        out.append(f'<span aria-current="page">{E(n)}</span>' if i == len(trail) - 1 else f'<a href="{P}{p}">{E(n)}</a><span aria-hidden="true">/</span>')
+    return '<nav class="crumbs" aria-label="Breadcrumb">' + ''.join(out) + '</nav>'
 
 def write(rel, text):
     full = os.path.join(OUT, rel); os.makedirs(os.path.dirname(full), exist_ok=True)
@@ -50,7 +83,7 @@ def _wave():
         out.append('M' + ' L'.join(f'{x:.1f} {y:.1f}' for x, y in top + bot) + 'Z')
     return ' '.join(out)
 
-STAR = re.search(r'<symbol id="star" viewBox="0 0 100 100"><path fill="currentColor" d="([^"]+)"', B.SYMBOLS).group(1)
+STAR = re.search(r'<symbol id="star" viewBox="0 0 100 100"><path fill="currentColor" d="([^"]+)"', SYMBOLS).group(1)
 GLYPHS = {
     'star': (STAR, 'Signature'),
     'spark': ('M50 2C54 36 64 46 98 50C64 54 54 64 50 98C46 64 36 54 2 50C36 46 46 36 50 2Z', 'Idea'),
@@ -250,9 +283,6 @@ def sec_head(no, glyph, label, title, aside=''):
     return (f'<header class="sh"><p class="sh__no">{no:02d}</p><p class="sh__label">{G(glyph)}<span>{label}</span></p>'
             f'<h2 class="sh__title rv">{title}</h2>{f"<div class=sh__aside>{aside}</div>" if aside else ""}</header>')
 
-def crumbs(P, trail):
-    return B.crumbs(P, trail)
-
 def phero(P, trail, meta, title, lead, actions='', glyphs=('spark', 'bloom', 'star'), aside=''):
     meta_html = ''.join(f'<li>{m}</li>' for m in meta)
     stick = ''.join(f'<span class="ph__g ph__g--{i}">{G(g)}</span>' for i, g in enumerate(glyphs))
@@ -276,9 +306,6 @@ def cta(P, line='Got a brand that deserves <em>better</em>?', sub='A free 30-min
         <div class="cta__side"><p>{sub}</p><a class="btn btn--red" href="{P}book/" data-cursor="Let's talk">Start a brand {ARR}</a></div>
       </div>
     </section>'''
-
-def faq(items, uid='q'):
-    return B.faq(items, uid)
 
 def band(P='', glyphs=None, theme='light'):
     gs = glyphs or list(GLYPHS)
@@ -325,7 +352,7 @@ def layout(P, path, title, desc, active, body, scripts=(), ld=()):
 </head>
 <body class="no-js">
   <script>document.body.classList.replace('no-js','js');</script>
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">{B.SYMBOLS}{G_SPRITE}</svg>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">{SYMBOLS}{G_SPRITE}</svg>
   <a class="skip" href="#main">Skip to content</a>
   <div class="grain" aria-hidden="true"></div>
   <div class="cursor" id="cursor" aria-hidden="true">{G('spark', 'cursor__g')}<span id="cursorLabel"></span></div>
@@ -535,7 +562,7 @@ def home():
     person = json.dumps({"@context": "https://schema.org", "@type": "Person", "name": "Manjil Shrestha", "alternateName": "mastha", "jobTitle": "Branding Expert",
                          "knowsAbout": ["Branding", "Brand strategy", "Visual identity", "Marketing"], "address": {"@type": "PostalAddress", "addressLocality": "Melbourne", "addressRegion": "VIC", "addressCountry": "AU"}, "areaServed": "Australia", "url": SITE}, ensure_ascii=False)
     builder_js = f'<script>window.BRAND_BUILDER = {json.dumps(BUILDER)}; window.BRAND_FONTS = {json.dumps({k: [v[0], v[1], v[2]] for k, v in FONTS.items()})};</script>'
-    write('index.html', layout(P, '', 'Branding Expert in Australia | Manjil Shrestha', 'Manjil Shrestha is a branding expert in Australia. Brand strategy, visual identity, naming and campaigns for businesses that are too good to look ordinary.', 'home', body + '\n' + builder_js, ['home.js'], [person, B.faq_ld(FAQ_HOME)]))
+    write('index.html', layout(P, '', 'Branding Expert in Australia | Manjil Shrestha', 'Manjil Shrestha is a branding expert in Australia. Brand strategy, visual identity, naming and campaigns for businesses that are too good to look ordinary.', 'home', body + '\n' + builder_js, ['home.js'], [person, faq_ld(FAQ_HOME)]))
 
 # ====================================================================== WORK
 def work():
@@ -630,7 +657,7 @@ def services():
     </section>
 
 {cta(P, "Not sure where to <em>start</em>?", "Tell me about the business. I'll tell you honestly what it needs first, even if that's nothing from me.")}'''
-    write('services/index.html', layout(P, 'services/', 'Branding Services in Australia | Manjil Shrestha', 'Brand strategy, visual identity, naming, campaigns, social and packaging from Manjil Shrestha, a branding expert in Australia.', 'services', body, ['inner.js'], [B.faq_ld(SVC_FAQ)]))
+    write('services/index.html', layout(P, 'services/', 'Branding Services in Australia | Manjil Shrestha', 'Brand strategy, visual identity, naming, campaigns, social and packaging from Manjil Shrestha, a branding expert in Australia.', 'services', body, ['inner.js'], [faq_ld(SVC_FAQ)]))
 
 # ====================================================================== BRAND IDENTITY SERVICE PAGE
 ID_FAQ = [("How many logo concepts will I see?", "Two distinct creative routes, each shown working on real things, not floating on white. We choose one and refine it together."),
@@ -713,7 +740,7 @@ def identity():
 
 {cta(P, "Ready to look like you <em>mean it</em>?")}'''
     svc = json.dumps({"@context": "https://schema.org", "@type": "Service", "name": "Brand identity design", "provider": {"@type": "Person", "name": "Manjil Shrestha"}, "areaServed": "Australia", "offers": {"@type": "Offer", "price": "9500", "priceCurrency": "AUD"}}, ensure_ascii=False)
-    write('services/brand-identity/index.html', layout(P, 'services/brand-identity/', 'Brand Identity Design in Australia | Manjil Shrestha', 'Brand identity design by Manjil Shrestha, a branding expert in Australia: logo suite, colour, type, icons, patterns, guidelines and launch kit.', 'services', body, ['inner.js'], [svc, B.faq_ld(ID_FAQ)]))
+    write('services/brand-identity/index.html', layout(P, 'services/brand-identity/', 'Brand Identity Design in Australia | Manjil Shrestha', 'Brand identity design by Manjil Shrestha, a branding expert in Australia: logo suite, colour, type, icons, patterns, guidelines and launch kit.', 'services', body, ['inner.js'], [svc, faq_ld(ID_FAQ)]))
 
 # ====================================================================== BOOK
 BOOK_FAQ = [("Is the brand chat really free?", "Yes. No card, no invoice, no obligation."), ("What should I bring?", "Your website or socials, a few brands you admire, and the thing that keeps bugging you about your current brand."),
@@ -774,7 +801,7 @@ def book():
         {faq(BOOK_FAQ)}
       </div>
     </section>'''
-    write('book/index.html', layout(P, 'book/', 'Book a Free Brand Chat | Manjil Shrestha, Branding Expert in Australia', 'Book a free 30-minute brand chat with Manjil Shrestha, a branding expert in Australia.', 'book', body, ['book.js'], [B.faq_ld(BOOK_FAQ)]))
+    write('book/index.html', layout(P, 'book/', 'Book a Free Brand Chat | Manjil Shrestha, Branding Expert in Australia', 'Book a free 30-minute brand chat with Manjil Shrestha, a branding expert in Australia.', 'book', body, ['book.js'], [faq_ld(BOOK_FAQ)]))
 
 # ====================================================================== CONTACT
 CONTACT_FAQ = [("Where do you work?", "Melbourne-based, with clients across Australia. Most work is remote, with workshops in person where it helps."),
@@ -812,7 +839,7 @@ def contact():
         {faq(CONTACT_FAQ)}
       </div>
     </section>'''
-    write('contact/index.html', layout(P, 'contact/', 'Contact Manjil Shrestha | Branding Expert in Australia', 'Get in touch with Manjil Shrestha, a branding expert in Australia, about brand strategy, identity, naming or campaigns.', 'contact', body, ['pages.js'], [B.faq_ld(CONTACT_FAQ)]))
+    write('contact/index.html', layout(P, 'contact/', 'Contact Manjil Shrestha | Branding Expert in Australia', 'Get in touch with Manjil Shrestha, a branding expert in Australia, about brand strategy, identity, naming or campaigns.', 'contact', body, ['pages.js'], [faq_ld(CONTACT_FAQ)]))
 
 # ====================================================================== JOURNAL CONTENT
 POSTS = [
@@ -931,7 +958,7 @@ def journal_rows(P, posts, soon=()):
     rows = []
     for i, p in enumerate(posts):
         rows.append(f'''<li class="jr" data-post data-tags="{p["tagkey"]}" data-text="{E((p["title"] + " " + p["dek"] + " " + p["tag"]).lower())}">
-            <a href="{P}blog/{p["slug"]}/" data-cursor="Read"><span class="jr__g">{G(p["glyph"])}</span><span class="jr__date">{B.fmt_date(p["date"])}</span><span class="jr__title">{E(p["title"])}</span><span class="jr__tag">{E(p["tag"])}</span><span class="jr__min">{p["minutes"]} min {ARR}</span></a></li>''')
+            <a href="{P}blog/{p["slug"]}/" data-cursor="Read"><span class="jr__g">{G(p["glyph"])}</span><span class="jr__date">{fmt_date(p["date"])}</span><span class="jr__title">{E(p["title"])}</span><span class="jr__tag">{E(p["tag"])}</span><span class="jr__min">{p["minutes"]} min {ARR}</span></a></li>''')
     for s in soon:
         rows.append(f'<li class="jr jr--soon post--soon" data-post data-tags="{s["tagkey"]}" data-text="{E((s["title"] + " " + s["dek"]).lower())}"><div><span class="jr__g">{G("spark")}</span><span class="jr__date">In progress</span><span class="jr__title">{E(s["title"])}</span><span class="jr__tag">{E(s["tag"])}</span><span class="jr__min">Soon</span></div></li>')
     return '<ol class="journal">' + ''.join(rows) + '</ol>'
@@ -948,7 +975,7 @@ def blog_index():
       <div class="wrap">
         <a class="feat rv" href="{feat["slug"]}/" data-post data-tags="{feat["tagkey"]}" data-text="{E((feat["title"] + " " + feat["dek"]).lower())}" data-cursor="Read">
           <div class="feat__img">{cover(feat["seed"], feat["glyph"], feat["word"], 0)}</div>
-          <div class="feat__txt"><p class="feat__k">Featured, {B.fmt_date(feat["date"])}, {feat["minutes"]} min</p><h2>{E(feat["title"])}</h2><p>{E(feat["dek"])}</p><span class="tlink">Read the article</span></div>
+          <div class="feat__txt"><p class="feat__k">Featured, {fmt_date(feat["date"])}, {feat["minutes"]} min</p><h2>{E(feat["title"])}</h2><p>{E(feat["dek"])}</p><span class="tlink">Read the article</span></div>
         </a>
         <div class="blog-tools rv"><div class="filters" role="group" aria-label="Filter by topic">{filt}</div><label class="search"><span class="sr">Search articles</span><input type="search" id="postSearch" placeholder="Search"><span id="postCount"></span></label></div>
         {journal_rows(P, POSTS, SOON)}
@@ -970,7 +997,7 @@ def article(p, i, template=False):
         <div class="wrap">
           {crumbs(P, [("Home", ""), ("Journal", "blog/"), (p["tag"], "blog/")])}
           <div class="art__grid">
-            <ul class="ph__meta"><li><span>Topic</span>{E(p["tag"])}</li><li><span>Published</span>{B.fmt_date(p["date"])}</li><li><span>Reading time</span>{p["minutes"]} minutes</li><li><span>Author</span>Manjil Shrestha</li></ul>
+            <ul class="ph__meta"><li><span>Topic</span>{E(p["tag"])}</li><li><span>Published</span>{fmt_date(p["date"])}</li><li><span>Reading time</span>{p["minutes"]} minutes</li><li><span>Author</span>Manjil Shrestha</li></ul>
             <div><h1 class="art__title"><span class="ln"><span>{E(p["title"])}</span></span></h1><p class="art__dek in">{E(p["dek"])}</p>
               <div class="share in"><a data-share="linkedin" target="_blank" rel="noopener">LinkedIn {NE}</a><a data-share="x" target="_blank" rel="noopener">X {NE}</a><button type="button" data-copy-link>Copy link</button></div></div>
           </div>
@@ -1043,14 +1070,195 @@ def page_template():
     </section>
 
 {cta(P)}'''
-    write(path + 'index.html', layout(P, path, 'Page template | Manjil Shrestha', 'Copy-ready Living Mark page template.', '', body, ['inner.js'], [B.faq_ld(fq)]))
+    write(path + 'index.html', layout(P, path, 'Page template | Manjil Shrestha', 'Copy-ready Living Mark page template.', '', body, ['inner.js'], [faq_ld(fq)]))
+
+# ====================================================================== DESIGN ELEMENTS (exported files)
+# Everything a designer needs outside the website: icons, logos, colours,
+# patterns, textures, living-mark shapes and the generated artwork.
+# Written to brand/design-elements/ on every build so it never goes stale.
+TOKENS = {
+    "colour": {"red": RED, "red-deep": "#C81E1E", "red-deep-on-blush": "#A81616", "ink": INK, "paper": PAPER, "blush": BLUSH, "stone": "#EADFD3"},
+    "font": {"display": "Bricolage Grotesque", "serif": "Fraunces", "mono": "DM Mono"},
+    "radius": {"card": "22px", "image": "30px", "pill": "999px"},
+    "border": "1.5px solid #161211",
+    "breakpoints": {"tablet": "1100px", "phone": "760px"},
+    "max-width": "1440px",
+}
+
+def _mark_r(name, a, t=0.0):
+    c, s, ab = math.cos, math.sin, abs
+    if name == 'circle': return 1.0
+    if name == 'signature': return 0.46 + 0.54 * ab(c(4 * a)) ** 6
+    if name == 'bloom': return 0.58 + 0.42 * ab(c(2 * a)) ** 0.5
+    if name == 'squircle': return (ab(c(a)) ** 4 + ab(s(a)) ** 4) ** -0.25 / 1.1892
+    if name == 'spark': return 1 / (ab(c(a)) ** 0.6 + ab(s(a)) ** 0.6) ** (1 / 0.6)
+    if name == 'sun': return 0.84 + 0.16 * math.tanh(5 * c(12 * a))
+    if name == 'blob': return 0.8 + 0.1 * s(3 * a + t) + 0.06 * s(5 * a - 1.3 * t) + 0.04 * s(2 * a + 0.7 * t)
+
+MARK_SHAPES = ['circle', 'signature', 'bloom', 'squircle', 'spark', 'sun', 'blob']
+
+def mark_path(name, n=240, size=100):
+    pts = []
+    for i in range(n):
+        a = i / n * 2 * math.pi; r = size * _mark_r(name, a, 0.8)
+        pts.append(f'{r * math.cos(a):.1f} {r * math.sin(a):.1f}')
+    return 'M' + ' L'.join(pts) + 'Z'
+
+def export_elements():
+    D = os.path.join(OUT, 'design-elements')
+    def save(rel, text):
+        full = os.path.join(D, rel); os.makedirs(os.path.dirname(full), exist_ok=True); open(full, 'w').write(text)
+    svg = lambda vb, body: f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{vb}">{body}</svg>\n'
+    # icons: one file per icon in three colourways, plus a sprite for websites
+    for k, (d, meaning) in GLYPHS.items():
+        fr = ' fill-rule="evenodd"' if k in EVENODD else ''
+        for cname, col in (('red', RED), ('ink', INK), ('paper', PAPER)):
+            save(f'icons/{cname}/{k}.svg', svg('0 0 100 100', f'<title>{k}: {meaning}</title><path fill="{col}"{fr} d="{d}"/>'))
+    save('icons/sprite.svg', f'<svg xmlns="http://www.w3.org/2000/svg" style="display:none">{G_SPRITE}</svg>\n')
+    # logo
+    logo = re.search(r'<symbol id="logo" viewBox="0 0 1463 317">(.*?)</symbol>', SYMBOLS, re.S).group(1)
+    for cname, letters, star in (('ink', INK, RED), ('red', RED, RED), ('paper', PAPER, RED), ('ink-mono', INK, INK)):
+        save(f'logo/manjil-logo-{cname}.svg', svg('0 0 1463 317', logo.replace('currentColor', letters).replace('var(--star, #F83232)', star)))
+    save('logo/manjil-logo-on-red.svg', svg('0 0 1563 417', f'<rect width="1563" height="417" fill="{RED}"/><g transform="translate(50 50)">{logo.replace("currentColor", INK).replace("var(--star, #F83232)", PAPER)}</g>'))
+    save('logo/favicon.svg', open(os.path.join(OUT, 'assets/favicon.svg')).read())
+    save('logo/app-icon.svg', svg('0 0 512 512', f'<rect width="512" height="512" rx="112" fill="{RED}"/>{gpath("spark", 106, 106, 300, PAPER)}'))
+    # living mark: the seven identities as static shapes
+    for k in MARK_SHAPES:
+        save(f'living-mark/{k}.svg', svg('-110 -110 220 220', f'<title>Living mark: {k}</title><path fill="{RED}" d="{mark_path(k)}"/>'))
+    # colours
+    save('colours/tokens.json', json.dumps(TOKENS, indent=2) + '\n')
+    save('colours/tokens.css', ':root {\n' + ''.join(f'  --{k}: {v};\n' for k, v in TOKENS['colour'].items()) +
+         f'  --display: "{TOKENS["font"]["display"]}", sans-serif;\n  --serif: "{TOKENS["font"]["serif"]}", serif;\n  --mono: "{TOKENS["font"]["mono"]}", monospace;\n  --r: 22px;\n}}\n')
+    sw = [(RED, 'Red', 'Primary'), (INK, 'Ink', 'Text, dark blocks'), (PAPER, 'Paper', 'Background'), (BLUSH, 'Blush', 'Secondary tint'), ('#C81E1E', 'Red deep', 'Small red text')]
+    save('colours/palette.svg', svg('0 0 1500 600', ''.join(f'<rect x="{i * 300}" width="300" height="600" fill="{c}"/>'
+         f'<text x="{i * 300 + 24}" y="520" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="40" fill="{PAPER if c in (RED, INK, "#C81E1E") else INK}">{n}</text>'
+         f'<text x="{i * 300 + 24}" y="556" font-family="DM Mono, monospace" font-size="18" fill="{PAPER if c in (RED, INK, "#C81E1E") else INK}">{c}</text>'
+         f'<text x="{i * 300 + 24}" y="580" font-family="DM Mono, monospace" font-size="14" fill="{PAPER if c in (RED, INK, "#C81E1E") else INK}">{u}</text>' for i, (c, n, u) in enumerate(sw))))
+    # patterns and textures
+    keys = list(GLYPHS); cols = [(PAPER, RED), (RED, INK), (BLUSH, RED), (INK, PAPER)]
+    save('patterns/pattern-band.svg', svg(f'0 0 {len(keys) * 120} 120', ''.join(f'<rect x="{i * 120}" width="120" height="120" fill="{cols[i % 4][0]}"/>' + gpath(k, i * 120 + 26, 26, 68, cols[i % 4][1]) for i, k in enumerate(keys))))
+    save('patterns/pattern-tile.svg', svg('0 0 480 480', ''.join(f'<rect x="{(i % 4) * 120}" y="{(i // 4) * 120}" width="120" height="120" fill="{cols[(i + i // 4) % 4][0]}"/>' + gpath(keys[(i * 5) % 12], (i % 4) * 120 + 26, (i // 4) * 120 + 26, 68, cols[(i + i // 4) % 4][1], (i * 90) % 360) for i in range(16))))
+    save('patterns/pattern-red-icons.svg', svg('0 0 800 500', f'<rect width="800" height="500" fill="{RED}"/>' + ''.join(gpath(keys[(i * 7) % 12], (i % 8) * 100 + 22, (i // 8) * 100 + 22, 56, INK if i % 5 else PAPER, (i * 45) % 360) for i in range(40))))
+    save('textures/halftone-ink-on-red.svg', svg('0 0 7 7', f'<rect width="7" height="7" fill="{RED}"/><circle cx="3.5" cy="3.5" r="1.1" fill="{INK}" fill-opacity=".14"/>'))
+    save('textures/halftone-red-on-blush.svg', svg('0 0 9 9', f'<rect width="9" height="9" fill="{BLUSH}"/><circle cx="4.5" cy="4.5" r="1.1" fill="{RED}" fill-opacity=".22"/>'))
+    save('textures/halftone-red-on-ink.svg', svg('0 0 9 9', f'<rect width="9" height="9" fill="{INK}"/><circle cx="4.5" cy="4.5" r="1.1" fill="{RED}" fill-opacity=".2"/>'))
+    save('textures/riso-grain.svg', '<svg xmlns="http://www.w3.org/2000/svg" width="440" height="440"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .09 0 0 0 0 .07 0 0 0 0 .07 0 0 0 .55 0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>\n')
+    # generated artwork
+    for w in WORK:
+        for kind in ['hero', 'cards', w['props'], 'pattern', 'palette']:
+            save(f'artwork/case-studies/{w["slug"]}-{kind}.svg', board(w, kind).replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ', 1))
+    for i, p in enumerate(POSTS):
+        save(f'artwork/journal-covers/{p["slug"]}.svg', cover(p['seed'], p['glyph'], p['word'], i % 3).replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ', 1))
+    save('README.md', f'''# Living Mark design elements
+
+Generated by `tools/build_brand.py` on every build. Edit the source there, not these files.
+Open `../styleguide/index.html` to see everything in context.
+
+| Folder | What |
+|---|---|
+| `icons/red`, `icons/ink`, `icons/paper` | The 12-icon alphabet as separate SVGs: {", ".join(GLYPHS)} |
+| `icons/sprite.svg` | All icons as `<symbol id="g-name">` for websites |
+| `logo/` | MANJIL logo in ink, red, paper, one-colour ink and on red; favicon; app icon |
+| `living-mark/` | The seven hero shapes: {", ".join(MARK_SHAPES)} |
+| `colours/` | `tokens.css`, `tokens.json`, `palette.svg` |
+| `patterns/` | Pattern band, repeatable tile, red icon pattern |
+| `textures/` | Halftone dot tiles for red, blush and ink, and the riso grain |
+| `artwork/` | Demo case-study boards and journal covers |
+
+Fonts (all free, SIL Open Font License, from Google Fonts): **Bricolage Grotesque** (display and UI), **Fraunces** (italic accent word, quotes, articles), **DM Mono** (labels).
+''')
+    print('wrote brand/design-elements/')
+
+# ====================================================================== STYLE GUIDE PAGE
+def styleguide():
+    P = '../'
+    sw = [(RED, 'Red', '--red', 'Primary. Fills, marks, icons, buttons.'), (INK, 'Ink', '--ink', 'Text, dark blocks, borders.'), (PAPER, 'Paper', '--bg', 'Background.'),
+          (BLUSH, 'Blush', '--blush', 'The only secondary tone.'), ('#C81E1E', 'Red deep', '--red-deep', 'Small red text on paper.')]
+    swatches = ''.join(f'<li class="sg-sw"><span style="background:{c}"></span><b>{n}</b><code>{c}</code><code>{t}</code><p>{u}</p></li>' for c, n, t, u in sw)
+    icons = ''.join(f'<li class="sg-ic">{G(k)}<b>{k}</b><span>{m}</span><a href="../design-elements/icons/red/{k}.svg" download>SVG</a></li>' for k, (_, m) in GLYPHS.items())
+    marks = ''.join(f'<li class="sg-mk"><svg viewBox="-110 -110 220 220" aria-hidden="true"><path fill="{RED}" d="{mark_path(k)}"/></svg><b>{k.title()}</b></li>' for k in MARK_SHAPES)
+    themes = ''.join(f'<div class="sg-theme" data-theme="{t}"><p class="sh__label">{G("spark")}<span>data-theme="{t}"</span></p><p class="sg-theme__t">Brands people <em>remember</em>.</p><a class="btn btn--red" href="#">Primary {ARR}</a><a class="btn btn--ink" href="#">Secondary</a></div>' for t in ('light', 'blush', 'red', 'dark'))
+    body = phero(P, [("Home", ""), ("Style guide", "styleguide/")], ["<span>Design</span>Living Mark", "<span>Rules</span>DESIGN-BLUEPRINT.md", "<span>Files</span>design-elements/"],
+                 "The Living Mark <em>style guide</em>.", "Every colour, typeface, icon, shape and component of this website on one page. Use it with the blueprint when you change or add pages.",
+                 '<a class="btn btn--ink" href="../design-elements/README.md">Design files</a><a class="tlink" href="#icons">Icon alphabet</a>', ('spark', 'quarter', 'star')) + f'''
+
+    <section class="sec" data-theme="light" id="colour">
+      <div class="wrap">
+        {sec_head(1, "bloom", "Colour", "Red leads, <em>always</em>.", '<p>Four site colours plus a deep red for small text. Client colours only inside client artwork.</p>')}
+        <ul class="sg-sws">{swatches}</ul>
+      </div>
+    </section>
+
+    <section class="sec" data-theme="blush" id="type">
+      <div class="wrap">
+        {sec_head(2, "bubble", "Type", "One grotesk, one <em>italic</em>, one mono.")}
+        <div class="sg-type">
+          <div><p class="sh__label"><span>Bricolage Grotesque · display 760</span></p><p class="sg-type__d">Brands people <em>remember</em>.</p></div>
+          <div><p class="sh__label"><span>Fraunces italic · the accent word, quotes, articles</span></p><p class="sg-type__s"><em>remember, iconic, brand, point</em></p></div>
+          <div><p class="sh__label"><span>Bricolage Grotesque · body 400</span></p><p class="sg-type__b">Strategy, identity and the marketing that makes it stick. For Australian businesses that are too good to look ordinary.</p></div>
+          <div><p class="sh__label"><span>DM Mono · labels</span></p><p class="hero__top" style="border:0">Section label · 12px · capitals · +0.06em</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" data-theme="light" id="icons">
+      <div class="wrap">
+        {sec_head(3, "spark", "Icon alphabet", "Twelve icons, one <em>language</em>.", '<p>Use G("name") in the generator. Download any icon as SVG.</p>')}
+        <ul class="sg-ics">{icons}</ul>
+      </div>
+    </section>
+
+    {band()}
+
+    <section class="sec" data-theme="dark" id="mark">
+      <div class="wrap">
+        {sec_head(4, "star", "Living mark", "Seven shapes, one <em>brand</em>.", '<p>The hero shape moves between these. Static SVGs are in design-elements/living-mark/.</p>')}
+        <ul class="sg-mks">{marks}</ul>
+      </div>
+    </section>
+
+    <section class="sec" data-theme="light" id="themes">
+      <div class="wrap">
+        {sec_head(5, "quarter", "Themes", "Four <em>moods</em>, same rules.", '<p>Every section declares one. Colours, icons and buttons adapt automatically.</p>')}
+        <div class="sg-themes">{themes}</div>
+      </div>
+    </section>
+
+    <section class="sec" data-theme="red" id="components">
+      <div class="wrap">
+        {sec_head(6, "target", "Components", "Building <em>blocks</em>.")}
+        <ol class="box">{"".join(f'<li class="box__i" tabindex="0">{G(g, "box__g")}<h3>{t}</h3><p>{d}</p></li>' for g, t, d in [("star", "Box card", ".box > .box__i. Flips to ink on hover."), ("heart", "Packages", "plans_html(P, PLANS). Always three."), ("wave", "Steps", ".steps > .step with an icon disc."), ("bubble", "FAQ", "faq(items) plus faq_ld(items).")])}</ol>
+      </div>
+    </section>
+
+    <section class="sec" data-theme="blush">
+      <div class="wrap">
+        {sec_head(7, "heart", "Packages", "Three ways to <em>start</em>.")}
+        {plans_html(P, PLANS)}
+      </div>
+    </section>
+
+    <section class="sec" data-theme="light" id="faq">
+      <div class="wrap faq">
+        {sec_head(8, "eye", "FAQ component", "Straight answers.")}
+        {faq([("Where are the rules?", "brand/DESIGN-BLUEPRINT.md: colours, type, icons, page structure, components, motion and the recipe for new pages."), ("Where are the files?", "brand/design-elements/: icons, logos, colours, patterns, textures, living-mark shapes and artwork.")])}
+      </div>
+    </section>
+
+{cta(P, "Building a new <em>page</em>?", "Copy page_template() in tools/build_brand.py, change the copy, rebuild.")}'''
+    write('styleguide/index.html', layout(P, 'styleguide/', 'Style guide | Living Mark | Manjil Shrestha', 'The Living Mark design system: colour, type, icons, shapes and components.', '', body, ['inner.js']))
 
 # ====================================================================== ASSETS + RUN
 def copy_assets():
-    for rel in ['js/content.js', 'js/book.js', 'js/blog.js', 'js/pages.js', 'js/vendor/gsap.min.js', 'js/vendor/ScrollTrigger.min.js', 'js/vendor/lenis.min.js', 'js/vendor/LICENSE-lenis.txt', 'assets/img/portrait.jpg', 'assets/img/avatar.png']:
-        dst = os.path.join(OUT, rel); os.makedirs(os.path.dirname(dst), exist_ok=True); shutil.copyfile(os.path.join(ROOT, rel), dst)
+    # Shared files from the main repo, copied in when they exist. In the standalone
+    # kit they already live inside brand/, so nothing is lost when they're missing.
+    for rel in ['js/book.js', 'js/blog.js', 'js/pages.js', 'js/vendor/gsap.min.js', 'js/vendor/ScrollTrigger.min.js', 'js/vendor/lenis.min.js', 'js/vendor/LICENSE-lenis.txt', 'assets/img/portrait.jpg', 'assets/img/avatar.png']:
+        src, dst = os.path.join(ROOT, rel), os.path.join(OUT, rel)
+        if os.path.exists(src):
+            os.makedirs(os.path.dirname(dst), exist_ok=True); shutil.copyfile(src, dst)
+    write('js/content.js', '/* Generated by tools/build_brand.py from CONTACT. Edit it there. */\nwindow.SITE = ' + json.dumps(CONTACT, indent=2, ensure_ascii=False) + ';\n')
     d = GLYPHS['spark'][0]
-    open(os.path.join(OUT, 'assets/favicon.svg'), 'w').write(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="{RED}"/><g transform="translate(12 12) scale(.4)"><path fill="{PAPER}" d="{d}"/></g></svg>\n')
+    write('assets/favicon.svg', f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="{RED}"/><g transform="translate(12 12) scale(.4)"><path fill="{PAPER}" d="{d}"/></g></svg>\n')
 
 if __name__ == '__main__':
     copy_assets()
@@ -1059,3 +1267,5 @@ if __name__ == '__main__':
         article(p, i)
     article(TEMPLATE, 0, template=True)
     page_template()
+    styleguide()
+    export_elements()

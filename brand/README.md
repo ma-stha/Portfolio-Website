@@ -14,7 +14,11 @@ A complete design that positions Manjil Shrestha as a **branding expert in Austr
 
 ## Pages
 
-Home, Work, Services, Brand identity service, Book, Contact, Journal with three branding articles and an article template, and a page template.
+Home, Work, Services, Brand identity service, Book, Contact, Journal with three branding articles and an article template, a page template, and a style guide (`styleguide/`).
+
+## Design files
+
+`design-elements/` holds the brand as files: the 12 icons (red, ink, paper), the MANJIL logo in five versions, favicon and app icon, the seven living-mark shapes, colour tokens (CSS and JSON) and palette, patterns, halftone and grain textures, and the demo artwork. They are regenerated on every build.
 
 ## Build
 
@@ -22,7 +26,7 @@ Home, Work, Services, Brand identity service, Book, Contact, Journal with three 
 python3 tools/build_brand.py
 ```
 
-All copy for this design (services, packages, case studies, articles, FAQs) lives in `tools/build_brand.py`, so it can differ from the data-led main site. `css/brand.css`, `js/core.js`, `js/home.js` and `js/inner.js` are hand-written.
+The generator is standalone: Python 3, no packages. All copy and settings for this design (domain, email, socials, services, packages, case studies, articles, FAQs) live in `tools/build_brand.py`. `css/brand.css`, `js/core.js`, `js/home.js` and `js/inner.js` are hand-written.
 
 ## Status
 

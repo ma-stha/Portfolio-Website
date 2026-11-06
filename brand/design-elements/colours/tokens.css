@@ -1,0 +1,13 @@
+:root {
+  --red: #F83232;
+  --red-deep: #C81E1E;
+  --red-deep-on-blush: #A81616;
+  --ink: #161211;
+  --paper: #F4EEE6;
+  --blush: #F9D8D1;
+  --stone: #EADFD3;
+  --display: "Bricolage Grotesque", sans-serif;
+  --serif: "Fraunces", serif;
+  --mono: "DM Mono", monospace;
+  --r: 22px;
+}

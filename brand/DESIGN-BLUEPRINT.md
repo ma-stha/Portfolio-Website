@@ -4,8 +4,10 @@
 
 The site is built like a brand book for Manjil himself: a logo that changes shape, its own icon alphabet, a pattern system, a texture and a voice. Every page and component follows this document. When you add a page, start from the template (section 9). If something new doesn't fit a rule here, add the rule here first, then build it.
 
+- **Style guide:** `brand/styleguide/index.html` shows every colour, font, icon, shape, theme and component.
+- **Design files:** `brand/design-elements/` holds icons, logos, colours, patterns, textures and artwork as SVG.
 - **Live template:** `brand/_template/index.html` shows the standard blocks in the standard order.
-- **Generator:** `tools/build_brand.py`. All copy for this design lives there; copy `page_template()` to make a page.
+- **Generator:** `tools/build_brand.py`. Standalone, Python 3 only. All copy and settings live there; copy `page_template()` to make a page.
 - **Styles:** `brand/css/brand.css`. Part 2 is the look; Part 1 is the structural base.
 
 ---
@@ -457,14 +459,18 @@ Open `http://localhost:8000/brand/services/packaging/` and run the checklist in 
 |---|---|
 | This blueprint | `brand/DESIGN-BLUEPRINT.md` |
 | Overview | `brand/README.md` |
-| Generator and **all copy**: icons, services, work, posts, pages, template | `tools/build_brand.py` |
-| Shared helpers (FAQ, crumbs, dates, logo symbol) | `tools/build_studio.py` |
+| **Generator and all copy** (standalone, Python only): settings, icons, services, work, posts, every page, templates, style guide, design-file export | `tools/build_brand.py` |
+| **Settings:** domain, email, socials, availability, Calendly link | `SITE` and `CONTACT` at the top of `tools/build_brand.py` (written to `brand/js/content.js`) |
+| Logo symbol (MANJIL wordmark and star) | `tools/symbols.txt` |
 | Styles | `brand/css/brand.css` |
 | Shared behaviour: nav, cursor, header theme, forms, burst, band drift | `brand/js/core.js` |
 | Home behaviour | `brand/js/home.js` |
 | Services and identity: before/after | `brand/js/inner.js` |
-| Contact clock / booking / blog | `brand/js/pages.js`, `book.js`, `blog.js` (copied from `js/`) |
-| Email, socials, availability, Calendly | `js/content.js` |
+| Contact clock, booking calendar, blog filters | `brand/js/pages.js`, `brand/js/book.js`, `brand/js/blog.js` |
+| Animation libraries (GSAP, ScrollTrigger, Lenis) | `brand/js/vendor/` |
+| Photos | `brand/assets/img/portrait.jpg`, `avatar.png` |
+| **Style guide** (every colour, font, icon, shape, theme and component on one page) | `brand/styleguide/index.html` |
+| **Design files** (icons, logos, colours, patterns, textures, mark shapes, artwork) | `brand/design-elements/` |
 | Page template | `brand/_template/index.html` |
 | Article template | `brand/blog/_template/index.html` |
 
